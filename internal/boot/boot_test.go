@@ -150,12 +150,12 @@ func TestNewProviderAppliesModelReasoningProtocol(t *testing.T) {
 			t.Fatalf("stream error: %v", chunk.Err)
 		}
 	}
-	if got := gotReq["reasoning_effort"]; got != "high" {
-		t.Fatalf("reasoning_effort = %#v, want high from DeepSeek model capability", got)
+	if got := gotReq["reasoning_effort"]; got != nil {
+		t.Fatalf("reasoning_effort = %#v, want unset (flash defaults to disabled thinking)", got)
 	}
 	thinking, ok := gotReq["thinking"].(map[string]any)
-	if !ok || thinking["type"] != "enabled" {
-		t.Fatalf("thinking = %#v, want enabled", gotReq["thinking"])
+	if !ok || thinking["type"] != "disabled" {
+		t.Fatalf("thinking = %#v, want disabled (flash model default)", gotReq["thinking"])
 	}
 }
 

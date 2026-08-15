@@ -52,8 +52,11 @@ default     = "deepseek-v4-flash"   # optional; defaults to the first of `models
 api_key_env = "DEEPSEEK_API_KEY"
 context_window = 1000000
 price       = { cache_hit = 0.02, input = 1, output = 2, currency = "¥" }   # per 1M tokens
-# DeepSeek thinking is always on; effort: high | max. Omit for auto (provider default).
-effort      = "high"
+# DeepSeek effort: disabled | high | max. "disabled" turns thinking off — zero
+# CoT output tokens and temperature honored (cheapest; the flash default). The
+# built-in deepseek-flash preset already defaults to disabled; pro model users
+# who want grounded reasoning set high|max.
+effort      = "disabled"
 
 # A single-model provider still works (use `model = "..."`) — pick this form when a
 # model needs its own base_url / context_window / price (e.g. the two MiMo SKUs

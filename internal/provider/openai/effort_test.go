@@ -36,6 +36,7 @@ func TestEffortNormalization(t *testing.T) {
 		{mimo, "", ""},        // unset stays omitted
 		{deepseek, "max", "max"},
 		{deepseek, "high", "high"},
+		{deepseek, "disabled", "disabled"},
 		{deepseek, "auto", "high"},
 		{deepseek, "", "high"}, // DeepSeek default depth
 	}

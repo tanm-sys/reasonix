@@ -338,6 +338,8 @@ func TestBuildRequestDeepSeekThinking(t *testing.T) {
 	}{
 		{name: "high", effort: "high", wantThinking: "enabled", wantReasoning: "high"},
 		{name: "max", effort: "max", wantThinking: "enabled", wantReasoning: "max"},
+		// disabled = thinking off entirely: no CoT output tokens, no depth hint.
+		{name: "disabled", effort: "disabled", wantThinking: "disabled", wantReasoning: ""},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			req := (&client{model: "deepseek-v4", deepseek: true, effort: tc.effort}).buildRequest(provider.Request{})

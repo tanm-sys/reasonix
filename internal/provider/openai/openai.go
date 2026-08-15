@@ -2,8 +2,9 @@
 // It self-registers under the "openai" kind, so DeepSeek, MiMo, MiniMax-M3, and
 // any other OpenAI-compatible endpoint are just config instances rather than
 // code. Each instance picks the wire shape from its base URL:
-//   - api.deepseek.com → emits thinking.type=enabled (DeepSeek-flavor CoT) plus
-//     reasoning_effort as a depth hint.
+//   - api.deepseek.com → emits thinking.type=enabled|disabled (DeepSeek-flavor
+//     CoT) plus reasoning_effort as a depth hint; effort=disabled turns thinking
+//     off entirely (cheap mode, temperature honored).
 //   - api.minimaxi.com → emits thinking.type=adaptive|disabled (M3's binary
 //     knob) instead of reasoning_effort, since M3 has no level scale.
 //   - everything else (MiMo and other OpenAI-compatible gateways) uses the
@@ -59,9 +60,10 @@ func New(cfg provider.Config) (provider.Provider, error) {
 		switch effort {
 		case "", "off": // "off" is a retired level (disabled thinking); fall back to the default depth
 			effort = "high"
+		case "disabled": // thinking off — zero CoT output tokens; the cheap/flash default
 		case "high", "max":
 		default:
-			return nil, fmt.Errorf("openai: provider %q uses DeepSeek thinking; effort must be high or max", name)
+			return nil, fmt.Errorf("openai: provider %q uses DeepSeek thinking; effort must be disabled, high, or max", name)
 		}
 	case minimax:
 		// M3's knob is binary. The config effort layer normalises user input
@@ -265,9 +267,16 @@ func (c *client) buildRequest(req provider.Request) chatRequest {
 	}
 	switch {
 	case c.deepseek:
-		// DeepSeek's CoT is controlled by `thinking` (always on) plus
-		// `reasoning_effort` for depth. We never disable thinking for DeepSeek.
-		out.Thinking = &thinkingMode{Type: "enabled"}
+		// DeepSeek's CoT is controlled by `thinking` (plus `reasoning_effort`
+		// for depth). "disabled" effort turns thinking off entirely — zero CoT
+		// output tokens, and temperature/penalties take effect again (they are
+		// silently ignored while thinking). Any other effort keeps thinking on.
+		if c.effort == "disabled" {
+			out.Thinking = &thinkingMode{Type: "disabled"}
+			out.ReasoningEffort = ""
+		} else {
+			out.Thinking = &thinkingMode{Type: "enabled"}
+		}
 	case c.minimax:
 		// M3 uses a single `thinking.type` field with two valid values:
 		// "adaptive" (default, thinking on) and "disabled" (off). Reasoning

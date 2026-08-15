@@ -29,7 +29,9 @@ type modelReasoningCapability struct {
 }
 
 var modelReasoningCapabilities = map[string]modelReasoningCapability{
-	"deepseek-v4-flash": {Protocol: ReasoningProtocolDeepSeek, Levels: []string{"high", "max"}, Default: "high"},
+	// "disabled" = thinking off: zero CoT output tokens, temperature honored.
+	// "high"/"max" = thinking on, depth hint. Flash defaults to thinking off.
+	"deepseek-v4-flash": {Protocol: ReasoningProtocolDeepSeek, Levels: []string{"disabled", "high", "max"}, Default: "disabled"},
 	"deepseek-v4-pro":   {Protocol: ReasoningProtocolDeepSeek, Levels: []string{"high", "max"}, Default: "high"},
 }
 
@@ -104,14 +106,14 @@ func NormalizeEffort(e *ProviderEntry, raw string) (string, error) {
 	switch ReasoningProtocolForEntry(e) {
 	case ReasoningProtocolDeepSeek:
 		switch level {
-		case "high", "max":
+		case "disabled", "high", "max":
 			return level, nil
 		case "low", "medium":
 			return "high", nil
 		case "xhigh":
 			return "max", nil
 		default:
-			return "", fmt.Errorf("usage: /effort auto|high|max")
+			return "", fmt.Errorf("usage: /effort auto|disabled|high|max")
 		}
 	case ReasoningProtocolOpenAI:
 		switch level {
@@ -164,7 +166,12 @@ func EffortDisplay(e *ProviderEntry) string {
 // EffectiveEffort resolves the provider-visible effort value. Explicit
 // ProviderEntry.Effort wins; otherwise a configured SupportedEfforts list makes
 // DefaultEffort (or the first supported level) the runtime default. Empty means
-// provider default / omit the provider-specific effort field.
+// provider default / omit the provider-specific effort field — except known
+// models whose capability table declares a Default (deepseek-v4-flash → disabled
+// thinking): that default applies so flash runs cheap out of the box without
+// polluting Default()'s preseeded providers (TOML merges array entries
+// positionally and would leak an explicit preset Effort onto unrelated first
+// providers).
 func EffectiveEffort(e *ProviderEntry) string {
 	if e == nil {
 		return ""
@@ -174,6 +181,9 @@ func EffectiveEffort(e *ProviderEntry) string {
 	}
 	supported := normalizedSupportedEfforts(e)
 	if len(supported) == 0 {
+		if cap, ok := resolvedModelReasoningCapability(e); ok {
+			return normalizeEffortLevel(cap.Default)
+		}
 		return ""
 	}
 	def := normalizeEffortLevel(e.DefaultEffort)
@@ -282,7 +292,7 @@ func effortCapabilityFromModel(cap modelReasoningCapability) EffortCapability {
 }
 
 func deepSeekEffortCapability() EffortCapability {
-	return EffortCapability{Supported: true, Levels: []string{"auto", "high", "max"}, Default: "high"}
+	return EffortCapability{Supported: true, Levels: []string{"auto", "disabled", "high", "max"}, Default: "high"}
 }
 
 func openAIEffortCapability() EffortCapability {

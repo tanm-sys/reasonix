@@ -119,3 +119,35 @@ func TestEffectiveEffortMiniMax(t *testing.T) {
 		t.Errorf("explicit EffectiveEffort = %q, want disabled", got)
 	}
 }
+
+func TestEffortCapabilityDeepSeekFlash(t *testing.T) {
+	e := &ProviderEntry{Kind: "openai", BaseURL: "https://api.deepseek.com/v1", Model: "deepseek-v4-flash"}
+	cap := EffortCapabilityForEntry(e)
+	if !cap.Supported {
+		t.Fatal("flash /effort should be supported")
+	}
+	want := []string{"auto", "disabled", "high", "max"}
+	if len(cap.Levels) != len(want) {
+		t.Fatalf("flash levels = %v, want %v", cap.Levels, want)
+	}
+	for i := range want {
+		if cap.Levels[i] != want[i] {
+			t.Fatalf("flash levels = %v, want %v", cap.Levels, want)
+		}
+	}
+	if cap.Default != "disabled" {
+		t.Errorf("flash default effort = %q, want disabled", cap.Default)
+	}
+}
+
+func TestNormalizeEffortDeepSeekDisabled(t *testing.T) {
+	e := &ProviderEntry{Kind: "openai", BaseURL: "https://api.deepseek.com/v1", Model: "deepseek-v4-flash"}
+	for _, lvl := range []string{"disabled", "high", "max"} {
+		if got, err := NormalizeEffort(e, lvl); err != nil || got != lvl {
+			t.Errorf("NormalizeEffort(%q) = %q, %v; want %q", lvl, got, err, lvl)
+		}
+	}
+	if _, err := NormalizeEffort(e, "turbo"); err == nil {
+		t.Error("NormalizeEffort(turbo) should reject garbage")
+	}
+}
