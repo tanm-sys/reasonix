@@ -2,7 +2,19 @@
   <img src="docs/logo.svg" alt="Reasonix" width="640"/>
 </p>
 
+<p align="center">
+  <strong>Built by Tanmay</strong> · highly secure harness · RL modeling ready
+</p>
+
 # Reasonix — secure, lean agent harness
+
+**Built by Tanmay.** This is a highly secure agent harness that doubles as an
+**RL modeling** loop: every run emits structured metrics (tokens, cache, cost,
+steps) plus deterministic pass/fail verifiers — exactly the reward signal
+reinforcement learning needs, already wired to a reproducible benchmark.
+Measured against the unmodified base and Hermes on identical tasks, it is
+faster and cheaper than most harnesses at the same pass rate. We will not
+argue it — **the results below speak.**
 
 A research fork of the Reasonix agent harness with one goal: make an autonomous
 agent **cheap enough to run long and small enough to audit**. Two parts:
