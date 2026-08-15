@@ -17,6 +17,7 @@ Usage:
 
 import argparse
 import json
+import threading
 import os
 import shutil
 import sqlite3
@@ -51,9 +52,15 @@ def harness_cmds():
             "cmd": ["/tmp/reasonix-bin", "run"],
             "env": {},  # optimized: economy prompt, thinking off, lean tools, caps
         },
-        "hermes-agent": {
-            "cmd": ["hermes", "-z"],  # args appended by run_hermes
-            "env": {},  # DEEPSEEK_API_KEY inherited from environment
+        "opencode-v4": {
+            "cmd": ["opencode", "run", "--pure"],
+            "env": {"OPENCODE_CONFIG": "/tmp/eff-test/opencode-v4.json"},
+        },
+        "claude-agent": {
+            "cmd": ["claude", "-p"],
+            "env": {"ANTHROPIC_BASE_URL": "http://127.0.0.1:4010",
+                    "ANTHROPIC_MODEL": "deepseek-v4-flash"},
+            # ANTHROPIC_AUTH_TOKEN / ANTHROPIC_API_KEY inherited from environment
         },
     }
 
@@ -97,11 +104,11 @@ def opencode_usage(start_rowid):
     return tot
 
 
-def run_opencode(start_rowid, task, workspace):
+def run_opencode(start_rowid, task, workspace, cfg=None):
     start = time.monotonic()
-    proc = subprocess.run(["opencode", "run", "--pure", task], cwd=workspace,
-                          capture_output=True, text=True, timeout=1800,
-                          env=dict(os.environ, OPENCODE_CONFIG="/dev/null"))
+    env = dict(os.environ, **((cfg or {}).get("env") or {}))
+    proc = subprocess.run((cfg or {}).get("cmd", ["opencode", "run", "--pure"]) + [task],
+                          cwd=workspace, capture_output=True, text=True, timeout=1800, env=env)
     wall = time.monotonic() - start
     return proc.returncode, wall, opencode_usage(start_rowid)
 
@@ -156,6 +163,30 @@ def run_prime(cfg, task, workspace):
     return proc.returncode, wall, m
 
 
+def run_claude(cfg, task, workspace):
+    """Claude Code via litellm proxy -> deepseek v4 flash. Usage from its JSON output."""
+    start = time.monotonic()
+    proc = subprocess.run(cfg["cmd"] + [task, "--dangerously-skip-permissions",
+                                        "--output-format", "json"],
+                          cwd=workspace, capture_output=True, text=True,
+                          timeout=1800, env=dict(os.environ, **cfg["env"]))
+    wall = time.monotonic() - start
+    m = {"prompt_tokens": 0, "completion_tokens": 0, "cache_hit_tokens": 0,
+         "cache_miss_tokens": 0, "steps": 0, "cost": 0.0, "currency": "USD"}
+    try:
+        d = json.loads(proc.stdout.strip().splitlines()[-1])
+        u = d.get("usage") or {}
+        m["prompt_tokens"] = u.get("input_tokens", 0)
+        m["completion_tokens"] = u.get("output_tokens", 0)
+        m["cache_hit_tokens"] = u.get("cache_read_input_tokens", 0)
+        m["cache_miss_tokens"] = u.get("cache_creation_input_tokens", 0)
+        m["steps"] = d.get("num_turns", 0)
+        m["cost"] = d.get("total_cost_usd", 0.0)  # claude's own pricing estimate
+    except Exception:
+        pass
+    return proc.returncode, wall, m
+
+
 def verify(task_dir):
     try:
         v = subprocess.run(["python3", "verify.py"], cwd=task_dir,
@@ -195,13 +226,15 @@ def row(harness, task, rep, ok, wall, m):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--reps", type=int, default=1)
-    ap.add_argument("--only", choices=["opencode-baseline", "upstream-reasonix",
-                                       "fork-reasonix", "hermes-agent", "prime-agent"])
+    ap.add_argument("--only", choices=["opencode-baseline", "opencode-v4", "upstream-reasonix",
+                                       "fork-reasonix", "claude-agent", "hermes-agent", "prime-agent"])
     ap.add_argument("--dataset", action="store_true")
     ap.add_argument("--dir", help="dataset dir with task subdirs (default /tmp/eff-test/dataset/tasks)")
     ap.add_argument("--task", help="single dataset task dir name (e.g. 03-csvstats)")
     ap.add_argument("--parallel", action="store_true",
                     help="run harnesses concurrently (wall time measured under contention)")
+    ap.add_argument("--sample", type=int, default=0,
+                    help="random subset of tasks (seeded); used for slow baselines")
     args = ap.parse_args()
     global DATASET_DIR
     if args.dir:
@@ -216,26 +249,33 @@ def main():
         dirs = sorted(p for p in DATASET_DIR.iterdir() if p.is_dir())
         if args.task:
             dirs = [d for d in dirs if d.name == args.task]
+        if args.sample:
+            import random
+            random.Random(42).shuffle(dirs)
+            dirs = dirs[:args.sample]
         tasks = [(d.name, (d / "prompt.txt").read_text().strip()) for d in dirs]
         workspaces.update({d.name: str(d) for d in dirs})
 
     outdir = REPO / "benchmarks/efficiency/results"
     outdir.mkdir(parents=True, exist_ok=True)
-    out = outdir / (f"efficiency-{DATASET_DIR.parent.name}.jsonl" if DATASET_DIR.parent.name.startswith("dataset") else
+    out = outdir / (f"efficiency-{DATASET_DIR.parent.name}.jsonl" if DATASET_DIR.parent.name.startswith(("dataset", "tricky")) else
                     ("efficiency-dataset.jsonl" if args.dataset else "efficiency-results.jsonl"))
+
+    OPLOCK = threading.Lock()
 
     def cell(job):
         harness, tname, task, rep = job
         hcfg = harness_cmds()[harness]
         ws = fresh_workspace(Path(workspaces[tname]), rep, harness) if args.dataset else workspaces[tname]
-        if harness == "opencode-baseline":
-            rid = next(sqlite3.connect(f"file:{OPCODE_DB}?mode=ro", uri=True).execute(
-                "SELECT COALESCE(MAX(rowid),0) FROM event"))[0]
-            rc, wall, m = run_opencode(rid, task, ws)
+        if harness in ("opencode-baseline", "opencode-v4"):
+            with OPLOCK:  # DB rowid snapshot must be exclusive per opencode run
+                rid = next(sqlite3.connect(f"file:{OPCODE_DB}?mode=ro", uri=True).execute(
+                    "SELECT COALESCE(MAX(rowid),0) FROM event"))[0]
+                rc, wall, m = run_opencode(rid, task, ws, hcfg)
+        elif harness == "claude-agent":
+            rc, wall, m = run_claude(hcfg, task, ws)
         elif harness == "hermes-agent":
             rc, wall, m = run_hermes(hcfg, task, ws, tname)
-        elif harness == "prime-agent":
-            rc, wall, m = run_prime(hcfg, task, ws)
         else:
             mp = Path(f"/tmp/eff-metrics-{harness}-{tname}-{rep}.json")
             rc, wall, m = run_reasonix(hcfg, mp, task, ws)

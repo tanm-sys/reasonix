@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860" style="background:#ffffff">
+<rect width="1200" height="860" fill="#ffffff"/>
+<text x="64" y="72" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" letter-spacing="3" fill="#111111">REASONIX / EFFICIENCY MEASUREMENT</text>
+<text x="64" y="96" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="30" font-weight="700" fill="#111111">FORK 6/6 · UPSTREAM 5/6 · OPENCODE 2/6</text>
+<rect x="64" y="112" width="56" height="4" fill="#ff0000"/>
+<text x="64" y="190" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" letter-spacing="2" fill="#c9c9c9">PASS RATE</text>
+<line x1="64" y1="198" x2="264" y2="198" stroke="#c9c9c9" stroke-width="1"/>
+<text x="64" y="500" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" letter-spacing="2" fill="#c9c9c9">COST / TASK — USD</text>
+<line x1="64" y1="508" x2="264" y2="508" stroke="#c9c9c9" stroke-width="1"/>
+<text x="640" y="190" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" letter-spacing="2" fill="#c9c9c9">WALL TIME — SECONDS</text>
+<line x1="640" y1="198" x2="840" y2="198" stroke="#c9c9c9" stroke-width="1"/>
+<text x="640" y="500" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" letter-spacing="2" fill="#c9c9c9">OUTPUT TOKENS / TASK</text>
+<line x1="640" y1="508" x2="840" y2="508" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="88" y1="234.0" x2="356" y2="234.0" stroke="#111111" stroke-width="1.6"/>
+<line x1="88" y1="283.0" x2="356" y2="283.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="88" y1="332.0" x2="356" y2="332.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="88" y1="381.0" x2="356" y2="381.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="88" y1="430.0" x2="356" y2="430.0" stroke="#c9c9c9" stroke-width="1"/>
+<text x="366" y="286.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">1</text>
+<text x="366" y="335.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">2</text>
+<text x="366" y="384.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">3</text>
+<rect x="88" y="-109.0" width="56" height="539.0" fill="#ff0000"/>
+<text x="116" y="-119.0" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#ff0000">22/8</text>
+<text x="116" y="452" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" fill="#111111">FORK-REASONIX</text>
+<rect x="260" y="-133.5" width="56" height="563.5" fill="#111111"/>
+<text x="288" y="-143.5" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#111111">23/8</text>
+<text x="288" y="452" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" fill="#111111">UPSTREAM-REASONIX</text>
+<text x="76" y="237.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="76" y="286.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="76" y="335.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="76" y="384.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="76" y="433.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">8</text>
+<line x1="88" y1="544.0" x2="356" y2="544.0" stroke="#111111" stroke-width="1.6"/>
+<line x1="88" y1="590.5" x2="356" y2="590.5" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="88" y1="637.0" x2="356" y2="637.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="88" y1="683.5" x2="356" y2="683.5" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="88" y1="730.0" x2="356" y2="730.0" stroke="#c9c9c9" stroke-width="1"/>
+<text x="366" y="593.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">1</text>
+<text x="366" y="640.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">2</text>
+<text x="366" y="686.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">3</text>
+<rect x="88" y="667.4" width="56" height="62.6" fill="#ff0000"/>
+<text x="116" y="657.4" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#ff0000">0.0075</text>
+<text x="116" y="752" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" fill="#111111">FORK-REASONIX</text>
+<rect x="260" y="544.0" width="56" height="186.0" fill="#111111"/>
+<text x="288" y="534.0" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#111111">0.0223</text>
+<text x="288" y="752" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" fill="#111111">UPSTREAM-REASONIX</text>
+<text x="76" y="547.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="76" y="593.5" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="76" y="640.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="76" y="686.5" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">0.015</text>
+<line x1="664" y1="234.0" x2="932" y2="234.0" stroke="#111111" stroke-width="1.6"/>
+<line x1="664" y1="283.0" x2="932" y2="283.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="664" y1="332.0" x2="932" y2="332.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="664" y1="381.0" x2="932" y2="381.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="664" y1="430.0" x2="932" y2="430.0" stroke="#c9c9c9" stroke-width="1"/>
+<text x="942" y="286.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">1</text>
+<text x="942" y="335.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">2</text>
+<text x="942" y="384.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">3</text>
+<rect x="664" y="401.6" width="56" height="28.4" fill="#ff0000"/>
+<text x="692" y="391.6" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#ff0000">6.5</text>
+<text x="692" y="452" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" fill="#111111">FORK-REASONIX</text>
+<rect x="836" y="225.6" width="56" height="204.4" fill="#111111"/>
+<text x="864" y="215.6" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#111111">46.9</text>
+<text x="864" y="452" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" fill="#111111">UPSTREAM-REASONIX</text>
+<text x="652" y="237.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="652" y="286.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="652" y="335.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="652" y="384.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">45.0</text>
+<line x1="664" y1="544.0" x2="932" y2="544.0" stroke="#111111" stroke-width="1.6"/>
+<line x1="664" y1="590.5" x2="932" y2="590.5" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="664" y1="637.0" x2="932" y2="637.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="664" y1="683.5" x2="932" y2="683.5" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="664" y1="730.0" x2="932" y2="730.0" stroke="#c9c9c9" stroke-width="1"/>
+<text x="942" y="593.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">1</text>
+<text x="942" y="640.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">2</text>
+<text x="942" y="686.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">3</text>
+<rect x="664" y="712.6" width="56" height="17.4" fill="#ff0000"/>
+<text x="692" y="702.6" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#ff0000">467</text>
+<text x="692" y="752" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" fill="#111111">FORK-REASONIX</text>
+<rect x="836" y="533.5" width="56" height="196.5" fill="#111111"/>
+<text x="864" y="523.5" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#111111">5,282</text>
+<text x="864" y="752" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" fill="#111111">UPSTREAM-REASONIX</text>
+<text x="652" y="547.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="652" y="593.5" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="652" y="640.0" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9"></text>
+<text x="652" y="686.5" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">5000</text>
+<line x1="64" y1="796" x2="1136" y2="796" stroke="#111111" stroke-width="1.6"/>
+<text x="64" y="822" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#c9c9c9">DATASET: 25 TASKS · STD LIBRARY · DEEPSEEK V4 FLASH · METRICS: -metrics JSON / HERMES USAGE FILE</text>
+<text x="1136" y="822" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#ff0000">RED = FORK</text>
+</svg>

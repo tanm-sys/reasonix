@@ -1,0 +1,1 @@
+{"harness": "claude-agent", "task": "he-000", "rep": 1, "ok": true, "wall_s": 10.99, "prompt_tokens": 25689, "completion_tokens": 1054, "cache_hit_tokens": 52096, "cache_miss_tokens": 0, "steps": 3, "cost": 0.18623299999999998, "currency": "USD", "compactions": 0}
