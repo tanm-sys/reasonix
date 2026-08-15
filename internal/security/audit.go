@@ -62,6 +62,12 @@ func OpenAudit(path string) (*AuditLog, error) {
 	if err != nil {
 		return nil, fmt.Errorf("audit open: %w", err)
 	}
+	// A pre-existing file may carry looser permissions; the trail must stay
+	// unreadable by agent-adjacent processes.
+	if err := f.Chmod(0o600); err != nil {
+		f.Close()
+		return nil, fmt.Errorf("audit chmod: %w", err)
+	}
 	return &AuditLog{f: f, path: path, enabled: true}, nil
 }
 
