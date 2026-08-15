@@ -33,8 +33,8 @@ crosses, in order:
 ## Milestones
 
 - [x] gate, policy, capability, risk, audit; wiring across executors; tests
-      (`internal/security/*_test.go`; runs identical to baseline: the only
-      failing packages are the pre-existing sandbox/tool-builtin ones).
+      (`internal/security/*_test.go`). Full suite: 42 `ok`, 0 `FAIL` (M13
+      sandbox probe cleanup included).
 - [x] **self-check + default on**: config defaults to `enabled=true`; boot runs
       `security.SelfCheck` (sensitive read denied, sensitive shell denied,
       workspace read/write granted, out-of-scope read denied) and fails safe —

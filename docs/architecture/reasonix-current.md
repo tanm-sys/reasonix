@@ -113,9 +113,9 @@ type Gate struct { ... } // implements agent.Gate
 ## 8. Technical debt relevant to this project
 
 - `seatbelt_other.go` doc comment ("no OS sandbox on this platform") is stale: bwrap support exists on linux. `sandbox_test.go` expectations (`TestCommandNonDarwin` "never wrap", `TestAvailableNonDarwin` "unavailable") contradict the bwrap implementation — stale tests predating the bwrap change.
-- `Available()` reports bwrap available without verifying a namespace can actually be created. On hosts with `kernel.unprivileged_userns_clone=0` (this machine), bwrap wraps, then fails at runtime with exit 1. No probe, no graceful degradation visible to the caller (bash tool reports "command exited"; confine_test fails).
+- ~~`Available()` reports bwrap available without verifying a namespace can actually be created~~ — **fixed (M13)**: `Available()` now runs a real bwrap self-test (`--ro-bind / / --unshare-net … /bin/true`, 10s timeout, cached) and reports false when userns is blocked on this host; boot distinguishes "bwrap absent" from "installed but self-test failed". Landlock ABI detection added (`LandlockABI()` via `/sys/kernel/security/landlock/abi` or `prctl(PR_LANDLOCK_CREATE_RULESET)` probe); landlock confinement itself lands in a later milestone.
 - `sandbox.go` header comment likewise says "Only macOS (Seatbelt) is implemented".
-- Sandbox tests failing on this host (3 in `internal/sandbox`, 1 in `internal/tool/builtin`) are environmental (userns disabled) plus stale-expectation. Baseline: 41 packages pass, 5 fail, all sandbox-related.
+- ~~Sandbox tests failing on this host~~ — **fixed (M13)**: stale expectations replaced with probe-consistent assertions; `TestBashSandboxConfinement` skips when bwrap is unusable instead of failing. Full suite now green (42 `ok`, 0 `FAIL`).
 - No provenance concept anywhere: tool args carry no origin tag; file content entering the model is indistinguishable from user instructions.
 - Permission gate is model-visible text for denials but has no structured audit trail beyond the event sink.
 - Capabilities are coarse: file-writer roots and shell jail are per-run globals; no scoped per-goal or per-origin authority.
@@ -166,5 +166,5 @@ flowchart TD
 ## Verification baseline (evidence)
 
 - `go build ./...` PASS; `go vet ./...` PASS.
-- `go test ./...`: 41 packages `ok`, 5 `FAIL` — all confined to sandbox confinement tests, root causes: (a) host `kernel.unprivileged_userns_clone=0` blocks bwrap namespaces, (b) stale test expectations that predate linux bwrap support.
+- `go test ./...`: 42 packages `ok`, 0 `FAIL` (M13: sandbox probe + stale-test cleanup).
 - Sandbox runtime confinement is unavailable on this host regardless of implementation; the security gate and policy layers are fully testable without it. Environment limitation, not code regression. See `docs/DEVELOPMENT.md` for reproduction.

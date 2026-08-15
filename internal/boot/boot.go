@@ -192,8 +192,15 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 
 	reg := tool.NewRegistry()
 	bashSpec := sandbox.Spec{Mode: cfg.BashMode(), WriteRoots: cfg.WriteRootsForRoot(root), Network: cfg.Sandbox.Network}
+	if abi := sandbox.LandlockABI(); abi > 0 && !sandbox.Available() {
+		fmt.Fprintf(stderr, "info: landlock ABI %d detected; landlock bash confinement lands in a later milestone (bwrap unavailable)\n", abi)
+	}
 	if bashSpec.Mode == "enforce" && !sandbox.Available() {
-		fmt.Fprintln(stderr, "warning: bash sandbox requested but unavailable on this platform; running bash unconfined")
+		if sandbox.BwrapInstalled() {
+			fmt.Fprintln(stderr, "warning: bash sandbox requested but bwrap self-test failed on this host (userns/setuid blocked?); running bash unconfined")
+		} else {
+			fmt.Fprintln(stderr, "warning: bash sandbox requested but unavailable on this platform; running bash unconfined")
+		}
 	}
 	if sandbox.ResolveShell().Kind == sandbox.ShellPowerShell {
 		fmt.Fprintln(stderr, "warning: bash not found on PATH; the shell tool will run commands under Windows PowerShell. Install Git for Windows or WSL to use bash.")

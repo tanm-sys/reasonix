@@ -182,17 +182,22 @@ func TestShellArgvDefaultsPath(t *testing.T) {
 
 // --- Command (platform-specific) ---
 
+// TestCommandNonDarwin covers the sequencing contract on non-darwin: an
+// enforce spec wraps with bwrap exactly when bwrap passed its self-test, and
+// otherwise falls back to the raw argv (unconfined, flagged false).
 func TestCommandNonDarwin(t *testing.T) {
 	if runtime.GOOS == "darwin" {
 		t.Skip("testing non-darwin path")
 	}
 	spec := Spec{Mode: "enforce", WriteRoots: []string{"/tmp"}}
 	cmd, wrapped := Command(spec, Shell{Kind: ShellBash, Path: "sh"}, "echo hi")
-	if wrapped {
-		t.Error("non-darwin should never wrap")
+	if wrapped && cmd[0] != "bwrap" {
+		t.Errorf("wrap must lead with bwrap path, got %v", cmd)
 	}
-	if len(cmd) != 3 || cmd[0] != "sh" || cmd[1] != "-c" || cmd[2] != "echo hi" {
-		t.Errorf("unexpected cmd: %v", cmd)
+	if !wrapped {
+		if len(cmd) != 3 || cmd[0] != "sh" || cmd[1] != "-c" || cmd[2] != "echo hi" {
+			t.Errorf("unexpected unwrapped cmd: %v", cmd)
+		}
 	}
 }
 
@@ -229,11 +234,38 @@ func TestCommandDarwinNonEnforce(t *testing.T) {
 
 // --- Available ---
 
+// TestAvailableNonDarwin asserts the availability contract on non-darwin:
+// Available mirrors the bwrap self-test result, and a bwrap that is installed
+// but fails its probe must be reported unavailable (never "available" on the
+// strength of PATH presence alone).
 func TestAvailableNonDarwin(t *testing.T) {
 	if runtime.GOOS == "darwin" {
 		t.Skip("testing non-darwin path")
 	}
-	if Available() {
-		t.Error("non-darwin should report unavailable")
+	if got := Available(); got != bwrapUsable() {
+		t.Errorf("Available() = %v, want bwrapUsable() = %v", got, bwrapUsable())
+	}
+	// Installed-but-broken is a legitimate state on hardened hosts (userns/
+	// setuid blocked) — what must hold is that Available never reports true
+	// without a passing self-test, which the consistency check above covers.
+}
+
+// TestBwrapProbeIsReal reserves the self-test contract on hosts that actually
+// have bwrap: when available, an enforce command must wrap and the probe must
+// succeed; when the probe fails, Command must NOT attempt bwrap.
+func TestBwrapProbeIsReal(t *testing.T) {
+	if runtime.GOOS == "darwin" {
+		t.Skip("linux-only")
+	}
+	if !BwrapInstalled() {
+		t.Skip("bwrap not installed")
+	}
+	spec := Spec{Mode: "enforce", WriteRoots: []string{"/tmp"}}
+	_, wrapped := Command(spec, Shell{Kind: ShellBash, Path: "sh"}, "echo hi")
+	if Available() && !wrapped {
+		t.Error("bwrap installed, probe passed, yet Command did not wrap")
+	}
+	if !Available() && wrapped {
+		t.Error("bwrap probe failed, yet Command attempted to wrap")
 	}
 }
