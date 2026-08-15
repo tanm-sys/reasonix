@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620" style="background:#ffffff">
+<text x="56" y="52" font-family="'Adwaita Sans', sans-serif" font-size="10" letter-spacing="3" fill="#8a8a8a">EFFICIENCY EVALUATION / RESEARCH VIEW</text>
+<rect x="56" y="60" width="48" height="3" fill="#d7261e"/>
+<text x="56" y="92" font-family="'Adwaita Sans', sans-serif" font-size="22" font-weight="700" fill="#17181a">Step efficiency</text>
+<text x="56" y="112" font-family="'Adwaita Sans', sans-serif" font-size="11" fill="#8a8a8a">Average agent steps per task. Fewer steps = less surface, fewer decisions. efficiency-dataset3.jsonl</text>
+<line x1="120" y1="180.0" x2="780" y2="180.0" stroke="#ececec" stroke-width="1"/>
+<line x1="120" y1="255.0" x2="780" y2="255.0" stroke="#ececec" stroke-width="1"/>
+<line x1="120" y1="330.0" x2="780" y2="330.0" stroke="#ececec" stroke-width="1"/>
+<line x1="120" y1="405.0" x2="780" y2="405.0" stroke="#ececec" stroke-width="1"/>
+<line x1="120" y1="480.0" x2="780" y2="480.0" stroke="#ececec" stroke-width="1"/>
+<rect x="255" y="327.6" width="60" height="152.4" fill="#d7261e"/>
+<text x="285" y="318" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="13" font-weight="700" fill="#d7261e">4.0</text>
+<text x="285" y="504" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="11" fill="#17181a">FORK</text>
+<rect x="585" y="180.0" width="60" height="300.0" fill="#333333"/>
+<text x="615" y="170" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="13" font-weight="700" fill="#333333">7.9</text>
+<text x="615" y="504" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="11" fill="#17181a">UPSTREAM</text>
+<line x1="120" y1="480" x2="780" y2="480" stroke="#17181a" stroke-width="1.4"/>
+<text x="120" y="530" font-family="'Adwaita Sans', sans-serif" font-size="9" fill="#8a8a8a">opencode burns ~51 steps per task and still solves none. fork solves in 4.1 — 2x fewer than upstream, 12x fewer than opencode.</text>
+</svg>
