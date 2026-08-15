@@ -20,7 +20,10 @@ system_prompt = """
 You are Reasonix, a coding agent focused on executing code tasks.
 Use the provided tools to read and write files and run shell commands.
 Principles: understand the request before acting; verify with tools instead of
-guessing; keep changes minimal and correct; briefly summarize what you did."""
+guessing; keep changes minimal and correct; briefly summarize what you did.
+Solve in the FEWEST STEPS: read what you need in one call (glob+read together),
+batch every edit into a single multi_edit call, and finish without re-reading
+files you already saw. Prefer one strong tool call over two tentative ones."""
 # system_prompt_file = "prompts/system.md"   # overrides system_prompt when set
 max_steps         = 0    # executor tool-call rounds; 0 = no limit
 planner_max_steps = 12   # planner read-only tool-call rounds; 0 = no limit
@@ -37,8 +40,9 @@ compact_force_ratio = 0.97   # force compacting at this high-water mark
 # planner_model = "mimo-pro"   # optional: enable two-model collaboration
 # subagent_model = "deepseek-pro"   # optional default for runAs=subagent skills
 # subagent_models = { review = "deepseek-pro", security_review = "deepseek-pro" }   # per-skill overrides
-# output_style = "explanatory"   # persona/tone folded into the prompt: explanatory | learning | concise,
-#                                  or a custom .reasonix/output-styles/<name>.md ; empty = default
+output_style = "concise"   # built-in: terse replies, code and bullets only — cuts
+                           # output tokens to the minimum; empty = default tone
+# output_style = "explanatory"   # alternatively: learning, or a custom .reasonix/output-styles/<name>.md
 
 # A provider is a vendor endpoint (one base_url + key) that offers one or more
 # models. Use `models = [...]` to expose several under a single entry — switching
@@ -61,8 +65,6 @@ effort      = "disabled"
 # A single-model provider still works (use `model = "..."`) — pick this form when a
 # model needs its own base_url / context_window / price (e.g. the two MiMo SKUs
 # below have different context windows).
-price       = { cache_hit = 0.025, input = 3, output = 6, currency = "¥" }   # per 1M tokens
-
 [[providers]]
 name           = "mimo-pro"
 kind           = "openai"
@@ -70,6 +72,7 @@ base_url       = "https://api.xiaomimimo.com/v1"
 model          = "mimo-v2.5-pro"   # thinking-mode on by default; reasoning_content rendered dim above the answer
 api_key_env    = "MIMO_API_KEY"
 context_window = 1000000
+price          = { cache_hit = 0.025, input = 3, output = 6, currency = "¥" }   # per 1M tokens
 
 [[providers]]
 name           = "mimo-flash"
@@ -114,7 +117,17 @@ thinking       = "adaptive"
 effort         = "high"
 
 [tools]
-enabled = []   # empty = all built-in tools
+# Efficiency mode: an explicit lean set instead of "all built-ins". Every
+# enabled tool adds its JSON-schema to the prompt (paid tokens each turn) and
+# widens the model's tool-choice space. The core set covers the whole coding
+# loop; multi_edit batches several edits into ONE call (fewer agent steps),
+# glob/grep/ls replace bash spelunking, and todo_write + complete_step keep
+# plan-flow protocol. Deliberately dropped (add back when a task needs them):
+#   - bash_output / wait / kill_shell  — background-job trio; foreground bash
+#     with bash_timeout_seconds covers the common path
+#   - web_fetch   — network reading; re-enable for web tasks
+#   - delete_range / delete_symbol / notebook_edit — niche edit forms
+enabled = ["bash", "read_file", "write_file", "edit_file", "multi_edit", "glob", "grep", "ls", "todo_write", "complete_step"]
 bash_timeout_seconds = 120   # foreground safety cap; set 0 for no tool-local cap
 
 # CodeGraph code intelligence (symbol/call-graph search via tree-sitter + SQLite),
