@@ -28,8 +28,13 @@ type Gate struct {
 
 // NewGate builds the security gate. inner is the existing permission gate
 // (permission.NewGate) used for ASK resolution; it can be swapped later via
-// SetInner when a frontend upgrades to interactive approval.
+// SetInner when a frontend upgrades to interactive approval. Nil inner or
+// grants are tolerated only in a not-armed state; Check treats them as deny
+// rather than panicking (startup self-check path).
 func NewGate(policy Policy, grants *GrantSet, audit *AuditLog, sessionID string, inner agent.Gate) *Gate {
+	if grants == nil {
+		grants = NewGrants()
+	}
 	return &Gate{
 		policy:    policy,
 		grants:    grants,
@@ -62,14 +67,16 @@ func (g *Gate) Check(ctx context.Context, toolName string, args json.RawMessage,
 
 	// 1. Deterministic security policy (credential/system paths; shell refs).
 	if reason, denied := g.policy.Denies(toolName, args); denied {
-		g.audit.Append(Record{
-			TS: now, SessionID: g.sessionID, Actor: "model", Tool: toolName,
-			Operation: string(op), Args: RedactArgs(args),
-			Provenance: []string{string(OriginModel)},
-			Policy:     []string{"sensitive_path"}, Risk: riskOf(op, subject).String(),
-			Decision: "DENY", Reason: reason, AuditID: auditID,
-			ExecutionStatus: "blocked",
-		})
+		if g.audit != nil {
+			g.audit.Append(Record{
+				TS: now, SessionID: g.sessionID, Actor: "model", Tool: toolName,
+				Operation: string(op), Args: RedactArgs(args),
+				Provenance: []string{string(OriginModel)},
+				Policy:     []string{"sensitive_path"}, Risk: riskOf(op, subject).String(),
+				Decision: "DENY", Reason: reason, AuditID: auditID,
+				ExecutionStatus: "blocked",
+			})
+		}
 		return false, reason, nil
 	}
 
@@ -78,15 +85,17 @@ func (g *Gate) Check(ctx context.Context, toolName string, args json.RawMessage,
 	for _, c := range caps {
 		if !g.grants.Allows(c) {
 			reason := fmt.Sprintf("blocked: capability %s not granted for this session; grant it in the security config or reduce the request scope", c.String())
-			g.audit.Append(Record{
-				TS: now, SessionID: g.sessionID, Actor: "model", Tool: toolName,
-				Operation: string(op), Args: RedactArgs(args),
-				Provenance: []string{string(OriginModel)}, Capability: c.String(),
-				Policy:   []string{"capability"},
-				Risk:     riskOf(op, subject).String(),
-				Decision: "DENY", Reason: reason, AuditID: auditID,
-				ExecutionStatus: "blocked",
-			})
+			if g.audit != nil {
+				g.audit.Append(Record{
+					TS: now, SessionID: g.sessionID, Actor: "model", Tool: toolName,
+					Operation: string(op), Args: RedactArgs(args),
+					Provenance: []string{string(OriginModel)}, Capability: c.String(),
+					Policy:   []string{"capability"},
+					Risk:     riskOf(op, subject).String(),
+					Decision: "DENY", Reason: reason, AuditID: auditID,
+					ExecutionStatus: "blocked",
+				})
+			}
 			return false, reason, nil
 		}
 		if granted == "" {
@@ -99,6 +108,20 @@ func (g *Gate) Check(ctx context.Context, toolName string, args json.RawMessage,
 
 	// 4. Existing permission UX (inner gate: allow/ask/deny rules + approver).
 	inner := g.innerGate()
+	if inner == nil {
+		// No permission gate installed (not-armed state): deny rather than panic.
+		if g.audit != nil {
+			g.audit.Append(Record{
+				TS: now, SessionID: g.sessionID, Actor: "model", Tool: toolName,
+				Operation: string(op), Args: RedactArgs(args),
+				Provenance: []string{string(OriginModel)},
+				Risk:       riskOf(op, subject).String(),
+				Decision:   "BLOCKED", Reason: "security gate not armed (no inner permission gate)",
+				AuditID: auditID, ExecutionStatus: "blocked",
+			})
+		}
+		return false, "security gate not armed", nil
+	}
 	allow, reason, err := inner.Check(ctx, toolName, args, readOnly)
 	decision := "ALLOW"
 	if err != nil {
@@ -106,14 +129,16 @@ func (g *Gate) Check(ctx context.Context, toolName string, args json.RawMessage,
 	} else if !allow {
 		decision = "DENY"
 	}
-	g.audit.Append(Record{
-		TS: now, SessionID: g.sessionID, Actor: "model", Tool: toolName,
-		Operation: string(op), Args: RedactArgs(args),
-		Provenance: []string{string(OriginModel)}, Capability: granted,
-		Policy:   []string{"permission"},
-		Risk:     risk.String(),
-		Decision: decision, Reason: reason, AuditID: auditID,
-	})
+	if g.audit != nil {
+		g.audit.Append(Record{
+			TS: now, SessionID: g.sessionID, Actor: "model", Tool: toolName,
+			Operation: string(op), Args: RedactArgs(args),
+			Provenance: []string{string(OriginModel)}, Capability: granted,
+			Policy:   []string{"permission"},
+			Risk:     risk.String(),
+			Decision: decision, Reason: reason, AuditID: auditID,
+		})
+	}
 	return allow, reason, err
 }
 

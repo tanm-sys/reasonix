@@ -35,8 +35,10 @@ crosses, in order:
 - [x] gate, policy, capability, risk, audit; wiring across executors; tests
       (`internal/security/*_test.go`; runs identical to baseline: the only
       failing packages are the pre-existing sandbox/tool-builtin ones).
-- [ ] **final bake-off**: default `enabled=true`, capability self-check at
-      boot (the plane checks it can still grant the workspace and deny
-      sensitive paths before arming), then run the benchmark scenarios.
+- [x] **self-check + default on**: config defaults to `enabled=true`; boot runs
+      `security.SelfCheck` (sensitive read denied, sensitive shell denied,
+      workspace read/write granted, out-of-scope read denied) and fails safe —
+      a failing self-check or audit file means the plane stays off with a
+      warning. Baseline runs: `REASONIX_SECURITY_POLICY=off`.
 - [ ] network/MCP capability enforcement; content-provenance capture;
       tamper-evident audit chain (see `docs/architecture/target.md`).

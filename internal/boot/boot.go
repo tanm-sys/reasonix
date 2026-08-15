@@ -403,6 +403,13 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 		if err != nil {
 			sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelWarn,
 				Text: fmt.Sprintf("security plane audit unavailable, gate disabled: %v", err)})
+		} else if err := security.SelfCheck(cfg.WriteRootsForRoot(root)); err != nil {
+			sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelWarn,
+				Text: fmt.Sprintf("security plane self-check FAILED, not arming (fail-safe): %v", err)})
+			if cerr := audit.Close(); cerr != nil {
+				sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelWarn,
+					Text: fmt.Sprintf("audit close: %v", cerr)})
+			}
 		} else {
 			grants := security.DefaultGrants(cfg.WriteRootsForRoot(root))
 			wrapGate = func(g agent.Gate) agent.Gate {
@@ -410,7 +417,7 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 			}
 			gate = wrapGate(headlessGate)
 			sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelInfo,
-				Text: fmt.Sprintf("security plane enabled (audit: %s)", auditPath)})
+				Text: fmt.Sprintf("security plane enabled (self-check ok, audit: %s)", auditPath)})
 		}
 	}
 

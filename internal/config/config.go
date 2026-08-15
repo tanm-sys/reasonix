@@ -669,9 +669,9 @@ type PermissionsConfig struct {
 // SecurityConfig enables the security control plane: a wrapper gate around the
 // permission gate that adds capability checks, advisory risk classification
 // and a structured audit trail for every model tool call. Safe defaults grant
-// the workspace-scoped authority and deny sensitive paths. Off by default at
-// this research milestone so existing workflows are untouched; the bake-off
-// milestone turns it on and runs the capability self-check.
+// the workspace-scoped authority and deny sensitive paths. On by default;
+// boot runs a capability self-check before arming and fails safe (plane off,
+// warned) when the check or the audit file fails.
 type SecurityConfig struct {
 	Enabled bool `toml:"enabled"`
 	// AuditFile overrides the structured audit log path (default:
@@ -797,10 +797,10 @@ func Default() *Config {
 		// resolves to allow) while `reasonix chat` prompts before writers. Users add
 		// deny/allow rules to harden or quiet specific tools.
 		Permissions: PermissionsConfig{Mode: "ask"},
-		// Security control plane off at this milestone; on during the final
-		// bake-off after the capability self-check passes. See
-		// docs/references/security-gate.md.
-		Security: SecurityConfig{Enabled: false},
+		// Security control plane on by default: the boot self-check grants the
+		// workspace and denies sensitive paths before arming; if the check or
+		// the audit file fails, boot fails safe (plane off, warned).
+		Security: SecurityConfig{Enabled: true},
 		// Sandbox on by default: bash is jailed (macOS), network allowed so
 		// builds/downloads work. Set bash = "off" to disable. Network=true here
 		// so an absent [sandbox] in a user's file keeps egress (zero value would

@@ -157,8 +157,9 @@ bash_timeout_seconds = 120   # foreground safety cap; set 0 for no tool-local ca
 # Security control plane (research): wraps every model tool call with
 # capability checks, advisory risk classification and a structured audit
 # trail. Safe defaults grant workspace-scoped authority and deny sensitive
-# paths. Off at this milestone so existing workflows are untouched; the
-# bake-off milestone enables it after the capability self-check passes.
-# [security]
-# enabled = true
+# paths. Boot self-checks before arming; a failing check or audit file fails
+# safe (plane off, warned). To run a baseline without the plane:
+# REASONIX_SECURITY_POLICY=off (or enabled = false).
+[security]
+enabled = true
 # audit_file = "/path/to/override/audit.jsonl"  # default: <cache>/security/audit.jsonl
