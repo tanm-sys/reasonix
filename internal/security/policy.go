@@ -23,10 +23,16 @@ const (
 // reqFromTool derives operation, subject and required capabilities from a tool
 // call. Tool-specific parsing is deliberately tiny and lives here, not in the
 // gate: the gate only evaluates what this returns.
+//
+// Subject semantics: file tools resolve their target the same way the built-ins
+// do (paths may be relative to the workspace; an absent path means the
+// workspace itself). File capability checks therefore work for "ls", "glob"
+// (no path field at all) and "grep" (optional path) — not just explicit-path
+// calls. Non-file tools assert no capability (see below).
 func reqFromTool(toolName string, args []byte) (Operation, string, []Capability) {
 	switch {
 	case strings.HasPrefix(toolName, "mcp__"):
-		// MCP mediation is a later milestone; no capability asserted yet.
+		// MCP mediation is a later milestone; the permission layer gates it.
 		return OpCall, "", nil
 	case toolName == "bash":
 		var p struct {
@@ -39,27 +45,52 @@ func reqFromTool(toolName string, args []byte) (Operation, string, []Capability)
 			URL string `json:"url"`
 		}
 		_ = json.Unmarshal(args, &p)
-		return OpConnect, p.URL, nil // network policy lands with the sandbox milestone
-	case isReader(toolName):
+		// Network capability lands with the sandbox milestone; the SSRF-guarded
+		// dialer and the permission layer gate web_fetch today.
+		return OpConnect, p.URL, nil
+	case isReader(toolName) || isWriter(toolName):
 		var p struct {
-			Path string `json:"path"`
+			Path    string `json:"path"`
+			Pattern string `json:"pattern"`
 		}
 		_ = json.Unmarshal(args, &p)
-		return OpRead, p.Path, []Capability{{ID: "filesystem.read", Scope: p.Path}}
-	case isWriter(toolName):
-		var p struct {
-			Path string `json:"path"`
+		subject := p.Path
+		if subject == "" {
+			// glob has no path field; grep/ls omit it to mean "." — resolve the
+			// tool's own default ("." = workspace root at runtime) so scope
+			// matching sees an absolute path instead of an un-grantable "".
+			subject = p.Pattern
 		}
-		_ = json.Unmarshal(args, &p)
-		return OpWrite, p.Path, []Capability{{ID: "filesystem.write", Scope: p.Path}}
+		if subject != "" {
+			if abs, err := filepath.Abs(subject); err == nil {
+				subject = abs
+			}
+		} else if cwd, err := os.Getwd(); err == nil {
+			subject = cwd
+		}
+		id := "filesystem.read"
+		if isWriter(toolName) {
+			id = "filesystem.write"
+		}
+		return opOf(toolName), subject, []Capability{{ID: id, Scope: subject}}
 	default:
+		// Uncategorized tools (ask, todo, memory, task, plugin/codegraph tools,
+		// ...) assert no capability: the permission UX gates them exactly as in
+		// the base variant. The capability plane covers file and shell ops.
 		return "", "", nil
 	}
 }
 
+func opOf(name string) Operation {
+	if isWriter(name) {
+		return OpWrite
+	}
+	return OpRead
+}
+
 func isReader(name string) bool {
 	switch name {
-	case "read_file", "ls", "glob", "grep", "codegraph_query":
+	case "read_file", "ls", "glob", "grep":
 		return true
 	}
 	return false
@@ -114,21 +145,29 @@ func (p Policy) Denies(toolName string, args []byte) (reason string, denied bool
 }
 
 // commandReferencesSensitive does a conservative word-boundary scan for
-// sensitive path references inside a shell command (e.g. "cat ~/.ssh/id_rsa",
-// "ssh somehost", "curl … .aws/credentials"). Conservative by design: false
-// positives surface as ASK/deny with an override path, false negatives are
-// covered by the sandbox (later milestone) and the audit trail.
+// credential-theft references inside a shell command (e.g. "cat ~/.ssh/id_rsa",
+// "curl … .aws/credentials"). These are hard-denied before the permission
+// gate. Anything else — including legit "ssh host" or "aws s3 ls" — is left to
+// capabilities + permission UX (a false-positive hard deny would break normal
+// shell workflows, so only exfiltration verbs live here).
 func commandReferencesSensitive(cmd string) bool {
 	return sensitiveCommandRe.MatchString(strings.ToLower(cmd))
 }
 
-// sensitiveCommandTokens matched as whole words so "awsome-tool" or
-// "ssh_config docs" do not trip the rule on their own.
+// sensitiveCommandTokens are the deny-list: directly grabbing credentials or
+// system auth material. "passwd"/"shadow" also cover reading auth databases.
 var sensitiveCommandTokens = []string{
-	"id_rsa", "id_ed25519", "ssh", "scp", "aws", "gcloud", "kubectl",
-	"credentials", ".netrc", ".gnupg", ".npmrc", ".pypirc", "kubeconfig",
-	"git-credentials", "shadow", "sudoers", "passwd", "wget", "curl",
+	"id_rsa", "id_ed25519", "credentials", ".netrc", ".gnupg", ".npmrc",
+	".pypirc", "kubeconfig", "git-credentials", "shadow", "sudoers", "passwd",
 	"api_key", "token", "secret", "password",
+}
+
+// riskCommandTokens are word-boundary flags that do NOT deny but classify the
+// call as critical risk for the audit (remote exfiltration vectors and tools
+// that can read local secrets indirectly).
+var riskCommandTokens = []string{
+	"ssh", "scp", "aws", "gcloud", "kubectl", "curl", "wget", "nc",
+	"netcat", "socat", "telnet",
 }
 
 // sensitiveCommandRe is the alternation of all tokens with word boundaries,
@@ -141,12 +180,21 @@ var sensitiveCommandRe = regexp.MustCompile(func() string {
 	return `(^|[^a-z0-9])(` + strings.Join(quoted, "|") + `)([^a-z0-9]|$)`
 }())
 
+// riskCommandRe flags risk tokens the same way (word boundaries, whole words).
+var riskCommandRe = regexp.MustCompile(func() string {
+	quoted := make([]string, len(riskCommandTokens))
+	for i, tok := range riskCommandTokens {
+		quoted[i] = regexp.QuoteMeta(tok)
+	}
+	return `(^|[^a-z0-9])(` + strings.Join(quoted, "|") + `)([^a-z0-9]|$)`
+}())
+
 // riskOf classifies the call for the advisory risk field. Heuristics only:
 // the decision comes from policy/capabilities/permission rules.
 func riskOf(op Operation, subject string) RiskLevel {
 	switch op {
 	case OpExecute:
-		if commandReferencesSensitive(subject) {
+		if commandReferencesSensitive(subject) || riskCommandRe.MatchString(strings.ToLower(subject)) {
 			return RiskCritical
 		}
 		return RiskMedium
@@ -159,10 +207,4 @@ func riskOf(op Operation, subject string) RiskLevel {
 	default:
 		return RiskLow
 	}
-}
-
-// envOverride allows the policy to be exercised in tests and evaluation runs
-// without touching the config file (baseline runs set it to "0").
-func envOverride() bool {
-	return os.Getenv("REASONIX_SECURITY_POLICY") == "off"
 }

@@ -400,8 +400,13 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 	// reapplied by the controller when it swaps in the interactive approval
 	// gate, so a security-enabled run never bypasses the plane. Grants derive
 	// from the workspace write roots; safe defaults deny sensitive paths.
-	gate := agent.Gate(headlessGate)
+gate := agent.Gate(headlessGate)
 	wrapGate := func(g agent.Gate) agent.Gate { return g }
+	// REASONIX_SECURITY_POLICY=off disables the whole plane (documented in
+	// reasonix.example.toml; used for baseline runs without the plane).
+	if os.Getenv("REASONIX_SECURITY_POLICY") == "off" {
+		cfg.Security.Enabled = false
+	}
 	var audit *security.AuditLog // nil when security disabled or self-check failed
 	if cfg.Security.Enabled {
 		auditPath := cfg.Security.AuditFile
@@ -422,8 +427,15 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 			}
 		} else {
 			grants := security.DefaultGrants(writeRoots)
+			policy := security.DefaultPolicy()
+			if cfg.Security.DenyReadSensitive != nil {
+				policy.DenyReadSensitive = *cfg.Security.DenyReadSensitive
+			}
+			if cfg.Security.DenyBashSensitive != nil {
+				policy.DenyBashSensitive = *cfg.Security.DenyBashSensitive
+			}
 			wrapGate = func(g agent.Gate) agent.Gate {
-				return security.NewGate(security.DefaultPolicy(), grants, audit, "", g)
+				return security.NewGate(policy, grants, audit, filepath.Base(root), g)
 			}
 			gate = wrapGate(headlessGate)
 			sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelInfo,

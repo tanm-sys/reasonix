@@ -42,6 +42,15 @@ func SelfCheck(workspaceRoots []string) error {
 		{"workspace read granted", "read_file", `{"path":"` + filepath.Join(root, "file.txt") + `"}`, true},
 		{"workspace write granted", "write_file", `{"path":"` + filepath.Join(root, "out.txt") + `"}`, true},
 		{"out-of-scope read denied", "read_file", `{"path":"/tmp/outside-workspace/file.txt"}`, false},
+		// Real tool arg shapes (regression guard: glob/grep have no path, ls
+		// treats it as optional). Relative subjects resolve against the process
+		// cwd, which at boot is the workspace root, so these use absolute
+		// patterns here; the relative path is covered in gate_test.
+		{"workspace glob granted", "glob", `{"pattern":"` + filepath.Join(root, "**/*.go") + `"}`, true},
+		{"sensitive glob denied", "glob", `{"pattern":"~/.ssh/*"}`, false},
+		{"workspace ls granted", "ls", `{"path":"` + root + `"}`, true},
+		{"workspace grep granted", "grep", `{"pattern":"x","path":"` + root + `"}`, true},
+		{"out-of-scope grep denied", "grep", `{"pattern":"x","path":"/tmp/outside-workspace/"}`, false},
 	}
 	for _, c := range checks {
 		ok, _, err := g.Check(context.Background(), c.tool, json.RawMessage(c.args), c.tool == "read_file")

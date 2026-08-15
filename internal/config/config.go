@@ -677,6 +677,13 @@ type SecurityConfig struct {
 	// AuditFile overrides the structured audit log path (default:
 	// <cache_dir>/security/audit.jsonl).
 	AuditFile string `toml:"audit_file"`
+	// DenyReadSensitive hard-denies reads/writes of credential and system
+	// paths (default true). Turn off only to restore base-variant behaviour.
+	DenyReadSensitive *bool `toml:"deny_read_sensitive"`
+	// DenyBashSensitive hard-denies shell commands that reference credential
+	// material (default true). False positives are possible by design; leave
+	// on unless legitimate commands are blocked.
+	DenyBashSensitive *bool `toml:"deny_bash_sensitive"`
 }
 
 // PluginEntry declares an external MCP server. Type selects the transport:

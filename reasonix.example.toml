@@ -27,9 +27,13 @@ planner_max_steps = 12   # planner read-only tool-call rounds; 0 = no limit
 temperature       = 0.0
 auto_plan         = "off"   # off|on; off keeps plan mode manual
 # auto_plan_classifier = "deepseek-flash"   # optional; only used for borderline tasks
-soft_compact_ratio  = 0.5   # notice only; keeps the cache-first prefix intact
-compact_ratio       = 0.8   # try compacting when prompt reaches this fraction
-compact_force_ratio = 0.9   # force compacting at this high-water mark
+# Tuned for deepseek-v4-flash (1M-token window): compaction is summarization
+# cost + cache-prefix destruction, so high-water marks sit high — a 1M window
+# only compacts when it genuinely must. For small-window models restore the
+# vanilla picture: soft 0.5 / compact 0.8 / force 0.9.
+soft_compact_ratio  = 0.85   # notice only; keeps the cache-first prefix intact
+compact_ratio       = 0.92   # try compacting when prompt reaches this fraction
+compact_force_ratio = 0.97   # force compacting at this high-water mark
 # planner_model = "mimo-pro"   # optional: enable two-model collaboration
 # subagent_model = "deepseek-pro"   # optional default for runAs=subagent skills
 # subagent_models = { review = "deepseek-pro", security_review = "deepseek-pro" }   # per-skill overrides
@@ -163,3 +167,7 @@ bash_timeout_seconds = 120   # foreground safety cap; set 0 for no tool-local ca
 [security]
 enabled = true
 # audit_file = "/path/to/override/audit.jsonl"  # default: <cache>/security/audit.jsonl
+# deny_read_sensitive = true    # hard-deny credential/system paths (default true)
+# deny_bash_sensitive = true    # hard-deny shell commands that grab credentials
+#                               # (default true; generic ssh/scp/aws/curl are NOT
+#                               # hard-denied — they classify as critical risk)
