@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="595" height="842" viewBox="0 0 595 842" style="background:#ffffff">
+<rect width="595" height="842" fill="#ffffff"/>
+<text x="48" y="56" font-family="'Adwaita Sans', sans-serif" font-size="8.5" font-weight="700" fill="#6b6f76" letter-spacing="2">SECURE-STATEFUL-EXECUTION LAB  ·  AGENT EFFICIENCY</text>
+<line x1="48" y1="64" x2="104" y2="64" stroke="#d7261e" stroke-width="3"/>
+<text x="48" y="100" font-family="'Adwaita Sans', sans-serif" font-size="26" font-weight="700" fill="#17181a">Secure by default.</text>
+<text x="48" y="130" font-family="'Adwaita Sans', sans-serif" font-size="26" font-weight="700" fill="#d7261e">3.5× cheaper, 3.8× faster.</text>
+<text x="48" y="154" font-family="'Adwaita Sans', sans-serif" font-size="10.5" font-weight="400" fill="#6b6f76">Three agents, one machine, identical prompts: the bloated original is 3.5× dearer and 3.8× slower</text>
+<text x="48" y="169" font-family="'Adwaita Sans', sans-serif" font-size="10.5" font-weight="400" fill="#6b6f76">per task. Eight AgentDojo tasks (MIT, real data) — one run of our script, reproducible end to end.</text>
+<text x="48" y="216" font-family="'Adwaita Sans', sans-serif" font-size="14" font-weight="700" fill="#17181a">The problem</text>
+<line x1="48" y1="224" x2="100" y2="224" stroke="#d7261e" stroke-width="2.5"/>
+<text x="48" y="236" font-family="'Adwaita Sans', sans-serif" font-size="9.8" font-weight="400" fill="#17181a">Autonomous agents are being handed real state — files, network, processes — while nobody can say what</text>
+<text x="48" y="250" font-family="'Adwaita Sans', sans-serif" font-size="9.8" font-weight="400" fill="#17181a">they will do next. Securing that means reviewing everything: every token the agent emits, every byte a tool</text>
+<text x="48" y="264" font-family="'Adwaita Sans', sans-serif" font-size="9.8" font-weight="400" fill="#17181a">hands back. That review is the security boundary, and a bloated agent makes it unaffordable — 1,900 output</text>
+<text x="48" y="278" font-family="'Adwaita Sans', sans-serif" font-size="9.8" font-weight="400" fill="#17181a">tokens and 80K of re-sent context for one small task. Our lab builds secure stateful execution for agents:</text>
+<text x="48" y="292" font-family="'Adwaita Sans', sans-serif" font-size="9.8" font-weight="400" fill="#17181a">capability-based permissions, bounded delegation, provenance. None of it is practical on a bloated runtime.</text>
+<text x="48" y="306" font-family="'Adwaita Sans', sans-serif" font-size="9.8" font-weight="400" fill="#17181a">Make the agent small enough to audit, and you can afford to audit everything.</text>
+<text x="48" y="342" font-family="'Adwaita Sans', sans-serif" font-size="14" font-weight="700" fill="#17181a">What we changed</text>
+<line x1="48" y1="350" x2="122" y2="350" stroke="#d7261e" stroke-width="2.5"/>
+<text x="48" y="382" font-family="'Adwaita Sans', sans-serif" font-size="10.5" font-weight="700" fill="#17181a">Economy in the prompt</text>
+<text x="48" y="398" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">Terse, predictable output in the default prompt. Less</text>
+<text x="48" y="410.5" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">text per step, less for a reviewer to read.</text>
+<text x="307.5" y="382" font-family="'Adwaita Sans', sans-serif" font-size="10.5" font-weight="700" fill="#17181a">Cache-aligned context</text>
+<text x="307.5" y="398" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">Byte-exact prefixes, stable blocks. Reproducible runs,</text>
+<text x="307.5" y="410.5" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">reproducible audits. 42K cache hits per task.</text>
+<text x="48" y="433.0" font-family="'Adwaita Sans', sans-serif" font-size="10.5" font-weight="700" fill="#17181a">Capped tool output</text>
+<text x="48" y="449.0" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">Bash capped at 64 KiB, job ring at 128 KiB. Hard bound</text>
+<text x="48" y="461.5" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">on what tools can inject into context.</text>
+<text x="307.5" y="433.0" font-family="'Adwaita Sans', sans-serif" font-size="10.5" font-weight="700" fill="#17181a">Every run measured</text>
+<text x="307.5" y="449.0" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">Metrics file per session: tokens, cache, cost, steps.</text>
+<text x="307.5" y="461.5" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">Provenance starts with measurement.</text>
+<text x="48" y="484.0" font-family="'Adwaita Sans', sans-serif" font-size="10.5" font-weight="700" fill="#17181a">Lean networking</text>
+<text x="48" y="500.0" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">Idle connections reused. Less surface area, cleaner</text>
+<text x="48" y="512.5" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">logs.</text>
+<text x="307.5" y="484.0" font-family="'Adwaita Sans', sans-serif" font-size="10.5" font-weight="700" fill="#17181a">One script proves it</text>
+<text x="307.5" y="500.0" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">runner.py replays the benchmark; charts regenerate</text>
+<text x="307.5" y="512.5" font-family="'Adwaita Sans', sans-serif" font-size="9.2" font-weight="400" fill="#6b6f76">from raw results JSON.</text>
+<text x="48" y="531.0" font-family="'Adwaita Sans', sans-serif" font-size="14" font-weight="700" fill="#17181a">How we measured it</text>
+<line x1="48" y1="539.0" x2="122" y2="539.0" stroke="#d7261e" stroke-width="2.5"/>
+<text x="48" y="551.0" font-family="'Adwaita Sans', sans-serif" font-size="10" font-weight="400" fill="#17181a">Fresh workspace per run, deterministic verifiers, identical prompts, DeepSeek v4 flash on one machine,</text>
+<text x="48" y="565.5" font-family="'Adwaita Sans', sans-serif" font-size="10" font-weight="400" fill="#17181a">real AgentDojo banking and travel data (MIT). Nothing hand-tuned per task.</text>
+<text x="48" y="598.0" font-family="'Adwaita Sans', sans-serif" font-size="8.5" font-weight="700" fill="#6b6f76" letter-spacing="1">Agent</text>
+<text x="250" y="598.0" font-family="'Adwaita Sans', sans-serif" font-size="8.5" font-weight="700" fill="#6b6f76" letter-spacing="1">Tasks</text>
+<text x="330" y="598.0" font-family="'Adwaita Sans', sans-serif" font-size="8.5" font-weight="700" fill="#6b6f76" letter-spacing="1">Time / task</text>
+<text x="420" y="598.0" font-family="'Adwaita Sans', sans-serif" font-size="8.5" font-weight="700" fill="#6b6f76" letter-spacing="1">Cost / task</text>
+<text x="500" y="598.0" font-family="'Adwaita Sans', sans-serif" font-size="8.5" font-weight="700" fill="#6b6f76" letter-spacing="1">Tokens</text>
+<line x1="48" y1="606.0" x2="546" y2="606.0" stroke="#17181a" stroke-width="1"/>
+<text x="48" y="622.0" font-family="'Adwaita Sans', sans-serif" font-size="10.5" font-weight="700" fill="#d7261e">Our agent (highly optimized)</text>
+<text x="250" y="622.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="700" fill="#d7261e">8/8</text>
+<text x="330" y="622.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="700" fill="#d7261e">5.4 s</text>
+<text x="420" y="622.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="700" fill="#d7261e">0.21¢</text>
+<text x="500" y="622.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="700" fill="#d7261e">271</text>
+<text x="48" y="642.0" font-family="'Adwaita Sans', sans-serif" font-size="10.5" font-weight="700" fill="#17181a">Original agent (bloated baseline)</text>
+<text x="250" y="642.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="400" fill="#17181a">8/8</text>
+<text x="330" y="642.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="400" fill="#17181a">20.2 s</text>
+<text x="420" y="642.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="400" fill="#17181a">0.73¢</text>
+<text x="500" y="642.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="400" fill="#17181a">1,935</text>
+<text x="48" y="662.0" font-family="'Adwaita Sans', sans-serif" font-size="10.5" font-weight="700" fill="#17181a">Hermes agent (third party)</text>
+<text x="250" y="662.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="400" fill="#17181a">8/8</text>
+<text x="330" y="662.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="400" fill="#17181a">18.8 s</text>
+<text x="420" y="662.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="400" fill="#17181a">0.06¢*</text>
+<text x="500" y="662.0" font-family="'JetBrainsMono NF', monospace" font-size="10.5" font-weight="400" fill="#17181a">679</text>
+<line x1="48" y1="682.0" x2="546" y2="682.0" stroke="#17181a" stroke-width="1"/>
+<text x="48" y="694.0" font-family="'Adwaita Sans', sans-serif" font-size="7.8" font-weight="400" fill="#6b6f76">* Hermes' own usage estimate, cache-priced; its real prompt volume hides in 89K cache reads per task. Different pricing path, so we</text>
+<text x="48" y="705.0" font-family="'Adwaita Sans', sans-serif" font-size="7.8" font-weight="400" fill="#6b6f76">compare against the original.</text>
+<rect x="48" y="726.0" width="499" height="74" fill="#ececec"/>
+<text x="62" y="750.0" font-family="'Adwaita Sans', sans-serif" font-size="13" font-weight="700" fill="#17181a">Every action traced, every tool bounded. 0.21¢ a task.</text>
+<text x="62" y="770.0" font-family="'Adwaita Sans', sans-serif" font-size="10" font-weight="400" fill="#17181a">3.5× cheaper and 3.8× faster than the bloated original. Output shrank 7× — less to review, less for</text>
+<text x="62" y="784.0" font-family="'Adwaita Sans', sans-serif" font-size="10" font-weight="400" fill="#17181a">anything untrusted to reach.</text>
+<text x="48" y="818" font-family="'Adwaita Sans', sans-serif" font-size="8.2" font-weight="400" fill="#6b6f76">secure-agent-lab / reasonix  ·  benchmarks/efficiency  ·  charts in results/ (swiss, lines, friendly)</text>
+<text x="499.578125" y="818" font-family="'Adwaita Sans', sans-serif" font-size="8.2" font-weight="400" fill="#6b6f76">15 Aug 2026</text>
+</svg>

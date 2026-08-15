@@ -219,7 +219,7 @@ def main():
 
     outdir = REPO / "benchmarks/efficiency/results"
     outdir.mkdir(parents=True, exist_ok=True)
-    out = outdir / (f"efficiency-{DATASET_DIR.name}.jsonl" if DATASET_DIR.name.startswith("dataset") else
+    out = outdir / (f"efficiency-{DATASET_DIR.parent.name}.jsonl" if DATASET_DIR.parent.name.startswith("dataset") else
                     ("efficiency-dataset.jsonl" if args.dataset else "efficiency-results.jsonl"))
 
     with open(out, "w") as f:
