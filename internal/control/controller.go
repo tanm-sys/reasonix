@@ -104,10 +104,13 @@ type Controller struct {
 	// resume (so a reopened session can still rewind conversation / fork), but
 	// dropped after a summarize restructures the log so those operations report
 	// "unavailable" rather than mis-truncating; code rewind (file-based) is unaffected.
-	cp      *checkpoint.Store
-	cpRoot  string
-	cpTurn  int
-	cpBound map[int]int
+	cp     *checkpoint.Store
+	cpRoot string
+	// wrapGate applies the security-plane wrapper to every permission gate the
+	// controller installs; nil = pass-through (security disabled).
+	wrapGate func(agent.Gate) agent.Gate
+	cpTurn   int
+	cpBound  map[int]int
 
 	// promptMu serialises approval prompts so at most one is outstanding at a
 	// time (parallel read-only tool calls don't normally gate, writers run
@@ -209,6 +212,11 @@ type Options struct {
 	// persist to disk (e.g. "Bash(go test:*)"). The callback is wired into the
 	// permission Gate on EnableInteractiveApproval.
 	OnRemember func(rule string) RememberResult
+	// WrapGate, when set, is applied to every permission gate the controller
+	// installs (interactive approval). Boot sets it to the security-plane
+	// wrapper so a security-enabled run keeps capability checks and audit even
+	// after the ask gate swap. Nil = pass-through.
+	WrapGate func(agent.Gate) agent.Gate
 }
 
 // New builds a Controller. A nil Sink is replaced with event.Discard.
@@ -253,6 +261,7 @@ func New(opts Options) *Controller {
 		reg:           opts.Registry,
 		pluginCtx:     pluginCtx,
 		cpRoot:        opts.WorkspaceRoot,
+		wrapGate:      opts.WrapGate,
 		approvals:     map[string]chan approvalReply{},
 		asks:          map[string]chan []event.AskAnswer{},
 		granted:       map[string]bool{},
@@ -841,7 +850,8 @@ func (c *Controller) ApproveWithScope(id string, allow, session, persist bool, s
 // decisions to the frontend via ApprovalRequest events, and wires the controller
 // in as the executor's Asker so the `ask` tool can question the user. Interactive
 // frontends (chat, desktop) call this; the headless run keeps the silent gate and
-// a nil asker from setup.
+// a nil asker from setup. The security-plane wrapper is reapplied on top of the
+// swap so capability checks and audit stay active.
 func (c *Controller) EnableInteractiveApproval() {
 	if c.executor != nil {
 		gate := permission.NewGate(c.policy, gateApprover{c})
@@ -850,7 +860,11 @@ func (c *Controller) EnableInteractiveApproval() {
 				_ = c.onRemember(rule)
 			}
 		} // wire legacy "always allow" persistence callback
-		c.executor.SetGate(gate)
+		if c.wrapGate != nil {
+			c.executor.SetGate(c.wrapGate(gate))
+		} else {
+			c.executor.SetGate(gate)
+		}
 		c.executor.SetAsker(c)
 	}
 }

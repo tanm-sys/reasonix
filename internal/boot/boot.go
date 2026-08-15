@@ -37,6 +37,7 @@ import (
 	"reasonix/internal/plugin"
 	"reasonix/internal/provider"
 	"reasonix/internal/sandbox"
+	"reasonix/internal/security"
 	"reasonix/internal/skill"
 	"reasonix/internal/tool"
 	"reasonix/internal/tool/builtin"
@@ -385,6 +386,34 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 	policy := permission.New(cfg.Permissions.Mode, cfg.Permissions.Allow, cfg.Permissions.Ask, cfg.Permissions.Deny)
 	headlessGate := permission.NewGate(policy, nil)
 
+	// Security control plane: a wrapper gate that adds capability checks,
+	// advisory risk and a structured audit trail around the permission gate.
+	// The same wrapper covers every executor (incl. subagents/planner) and is
+	// reapplied by the controller when it swaps in the interactive approval
+	// gate, so a security-enabled run never bypasses the plane. Grants derive
+	// from the workspace write roots; safe defaults deny sensitive paths.
+	gate := agent.Gate(headlessGate)
+	wrapGate := func(g agent.Gate) agent.Gate { return g }
+	if cfg.Security.Enabled {
+		auditPath := cfg.Security.AuditFile
+		if auditPath == "" {
+			auditPath = filepath.Join(config.CacheDir(), "security", "audit.jsonl")
+		}
+		audit, err := security.OpenAudit(auditPath)
+		if err != nil {
+			sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelWarn,
+				Text: fmt.Sprintf("security plane audit unavailable, gate disabled: %v", err)})
+		} else {
+			grants := security.DefaultGrants(cfg.WriteRootsForRoot(root))
+			wrapGate = func(g agent.Gate) agent.Gate {
+				return security.NewGate(security.DefaultPolicy(), grants, audit, "", g)
+			}
+			gate = wrapGate(headlessGate)
+			sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelInfo,
+				Text: fmt.Sprintf("security plane enabled (audit: %s)", auditPath)})
+		}
+	}
+
 	// Hooks: load the global settings.json plus the project's (only when trusted —
 	// project hooks run arbitrary shell commands, so cloning a repo must not
 	// silently execute them). Non-blocking hook output is surfaced to the user as
@@ -435,7 +464,7 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 	taskEffort := firstNonEmpty(cfg.Agent.SubagentEfforts["task"], cfg.Agent.SubagentEffort)
 	reg.Add(agent.NewTaskTool(execProv, entry.Price, reg, maxSteps,
 		entry.ContextWindow, cfg.Agent.SoftCompactRatio, cfg.Agent.CompactRatio, cfg.Agent.CompactForceRatio,
-		cfg.Agent.Temperature, config.ArchiveDir(), "", headlessGate,
+		cfg.Agent.Temperature, config.ArchiveDir(), "", gate,
 		taskModel, taskEffort, resolveSubagentProvider))
 
 	// The `remember` tool lets the model persist durable facts to the project's
@@ -478,7 +507,7 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 			MaxSteps:      steps,
 			Temperature:   cfg.Agent.Temperature,
 			Pricing:       price,
-			Gate:          headlessGate,
+			Gate:          gate,
 			ContextWindow: ctxWin,
 			ArchiveDir:    config.ArchiveDir(),
 		}, agent.NestedSink(sctx, event.Discard))
@@ -546,7 +575,7 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 		MaxSteps:          maxSteps,
 		Temperature:       cfg.Agent.Temperature,
 		Pricing:           entry.Price,
-		Gate:              headlessGate,
+		Gate:              gate,
 		Hooks:             hookRunner,
 		Jobs:              jm,
 		ProjectChecks:     projectChecks,
@@ -608,7 +637,7 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 			runner = agent.NewCoordinator(plannerProv, plannerSess, pe.Price, plannerTools, agent.Options{
 				MaxSteps:          cfg.Agent.PlannerMaxSteps,
 				MaxStepsKey:       "agent.planner_max_steps",
-				Gate:              headlessGate,
+				Gate:              gate,
 				ContextWindow:     pe.ContextWindow,
 				SoftCompactRatio:  cfg.Agent.SoftCompactRatio,
 				CompactRatio:      cfg.Agent.CompactRatio,
@@ -636,6 +665,7 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 		Executor:      executor,
 		Sink:          sink,
 		Policy:        policy,
+		WrapGate:      wrapGate,
 		Label:         label,
 		SystemPrompt:  sysPrompt,
 		SessionDir:    config.SessionDir(),

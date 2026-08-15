@@ -49,6 +49,7 @@ type Config struct {
 	Providers     []ProviderEntry     `toml:"providers"`
 	Tools         ToolsConfig         `toml:"tools"`
 	Permissions   PermissionsConfig   `toml:"permissions"`
+	Security      SecurityConfig      `toml:"security"`
 	Sandbox       SandboxConfig       `toml:"sandbox"`
 	Network       NetworkConfig       `toml:"network"`
 	Plugins       []PluginEntry       `toml:"plugins"`
@@ -665,6 +666,19 @@ type PermissionsConfig struct {
 	Deny  []string `toml:"deny"`
 }
 
+// SecurityConfig enables the security control plane: a wrapper gate around the
+// permission gate that adds capability checks, advisory risk classification
+// and a structured audit trail for every model tool call. Safe defaults grant
+// the workspace-scoped authority and deny sensitive paths. Off by default at
+// this research milestone so existing workflows are untouched; the bake-off
+// milestone turns it on and runs the capability self-check.
+type SecurityConfig struct {
+	Enabled bool `toml:"enabled"`
+	// AuditFile overrides the structured audit log path (default:
+	// <cache_dir>/security/audit.jsonl).
+	AuditFile string `toml:"audit_file"`
+}
+
 // PluginEntry declares an external MCP server. Type selects the transport:
 // "stdio" (default) launches Command/Args/Env as a subprocess; "http"
 // (a.k.a. streamable-http) and "sse" connect to a remote URL with optional
@@ -783,6 +797,10 @@ func Default() *Config {
 		// resolves to allow) while `reasonix chat` prompts before writers. Users add
 		// deny/allow rules to harden or quiet specific tools.
 		Permissions: PermissionsConfig{Mode: "ask"},
+		// Security control plane off at this milestone; on during the final
+		// bake-off after the capability self-check passes. See
+		// docs/references/security-gate.md.
+		Security: SecurityConfig{Enabled: false},
 		// Sandbox on by default: bash is jailed (macOS), network allowed so
 		// builds/downloads work. Set bash = "off" to disable. Network=true here
 		// so an absent [sandbox] in a user's file keeps egress (zero value would
