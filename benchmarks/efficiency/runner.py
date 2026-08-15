@@ -106,8 +106,8 @@ def run_opencode(start_rowid, task, workspace):
     return proc.returncode, wall, opencode_usage(start_rowid)
 
 
-def run_hermes(cfg, task, workspace):
-    mp = Path("/tmp/eff-hermes-usage.json")
+def run_hermes(cfg, task, workspace, tname="run"):
+    mp = Path(f"/tmp/eff-hermes-usage-{tname}.json")
     mp.unlink(missing_ok=True)
     full = cfg["cmd"] + [task, "--provider", "deepseek", "-m", "deepseek-v4-flash",
                          "--ignore-user-config", "--usage-file", str(mp)]
@@ -169,9 +169,9 @@ def verify(task_dir):
 ARTIFACTS = {"hello.py", "sorted.txt", "stats.py", "chart.svg", "__pycache__", ".codegraph"}
 
 
-def fresh_workspace(task_dir, rep):
+def fresh_workspace(task_dir, rep, harness=""):
     """Scratch copy of a task dir per run: no stale artifacts, no cross-run bleed."""
-    run_dir = Path(f"/tmp/eff-run/{task_dir.name}-{rep}")
+    run_dir = Path(f"/tmp/eff-run/{task_dir.name}-{rep}-{harness}")
     if run_dir.exists():
         shutil.rmtree(run_dir)
     shutil.copytree(task_dir, run_dir, ignore=shutil.ignore_patterns(*ARTIFACTS))
@@ -200,6 +200,8 @@ def main():
     ap.add_argument("--dataset", action="store_true")
     ap.add_argument("--dir", help="dataset dir with task subdirs (default /tmp/eff-test/dataset/tasks)")
     ap.add_argument("--task", help="single dataset task dir name (e.g. 03-csvstats)")
+    ap.add_argument("--parallel", action="store_true",
+                    help="run harnesses concurrently (wall time measured under contention)")
     args = ap.parse_args()
     global DATASET_DIR
     if args.dir:
@@ -222,33 +224,47 @@ def main():
     out = outdir / (f"efficiency-{DATASET_DIR.parent.name}.jsonl" if DATASET_DIR.parent.name.startswith("dataset") else
                     ("efficiency-dataset.jsonl" if args.dataset else "efficiency-results.jsonl"))
 
+    def cell(job):
+        harness, tname, task, rep = job
+        hcfg = harness_cmds()[harness]
+        ws = fresh_workspace(Path(workspaces[tname]), rep, harness) if args.dataset else workspaces[tname]
+        if harness == "opencode-baseline":
+            rid = next(sqlite3.connect(f"file:{OPCODE_DB}?mode=ro", uri=True).execute(
+                "SELECT COALESCE(MAX(rowid),0) FROM event"))[0]
+            rc, wall, m = run_opencode(rid, task, ws)
+        elif harness == "hermes-agent":
+            rc, wall, m = run_hermes(hcfg, task, ws, tname)
+        elif harness == "prime-agent":
+            rc, wall, m = run_prime(hcfg, task, ws)
+        else:
+            mp = Path(f"/tmp/eff-metrics-{harness}-{tname}-{rep}.json")
+            rc, wall, m = run_reasonix(hcfg, mp, task, ws)
+            mp.unlink(missing_ok=True)
+        passed = verify(Path(ws)) if "verify.py" in os.listdir(ws) else rc == 0
+        r = row(harness, tname, rep, rc == 0 and passed, wall, m)
+        print(f"  {harness:<20} {tname:<18} rep {rep}: pass={r['ok']} "
+              f"wall={r['wall_s']}s prompt={r['prompt_tokens']} out={r['completion_tokens']} "
+              f"hit={r['cache_hit_tokens']} miss={r['cache_miss_tokens']} "
+              f"steps={r['steps']} cost=${r['cost']:.4f}", flush=True)
+        return r
+
+    jobs = [(harness, tname, task, rep)
+            for harness, hcfg in harness_cmds().items()
+            if not (args.only and args.only != harness)
+            for tname, task in tasks
+            for rep in range(1, args.reps + 1)]
+
+    if args.parallel:
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=3) as ex:
+            results = list(ex.map(cell, jobs))
+    else:
+        results = [cell(j) for j in jobs]
+
+    results.sort(key=lambda r: (r["harness"], r["task"], r["rep"]))
     with open(out, "w") as f:
-        for harness, hcfg in harness_cmds().items():
-            if args.only and args.only != harness:
-                continue
-            for tname, task in tasks:
-                for rep in range(1, args.reps + 1):
-                    ws = fresh_workspace(Path(workspaces[tname]), rep) if args.dataset else workspaces[tname]
-                    if harness == "opencode-baseline":
-                        rid = next(sqlite3.connect(f"file:{OPCODE_DB}?mode=ro", uri=True).execute(
-                            "SELECT COALESCE(MAX(rowid),0) FROM event"))[0]
-                        rc, wall, m = run_opencode(rid, task, ws)
-                    elif harness == "hermes-agent":
-                        rc, wall, m = run_hermes(hcfg, task, ws)
-                    elif harness == "prime-agent":
-                        rc, wall, m = run_prime(hcfg, task, ws)
-                    else:
-                        mp = Path(f"/tmp/eff-metrics-{harness}-{rep}.json")
-                        rc, wall, m = run_reasonix(hcfg, mp, task, ws)
-                        mp.unlink(missing_ok=True)
-                    passed = verify(Path(ws)) if "verify.py" in os.listdir(ws) else rc == 0
-                    r = row(harness, tname, rep, rc == 0 and passed, wall, m)
-                    f.write(json.dumps(r) + "\n")
-                    f.flush()
-                    print(f"  {harness:<20} {tname:<14} rep {rep}: pass={r['ok']} "
-                          f"wall={r['wall_s']}s prompt={r['prompt_tokens']} out={r['completion_tokens']} "
-                          f"hit={r['cache_hit_tokens']} miss={r['cache_miss_tokens']} "
-                          f"steps={r['steps']} cost=${r['cost']:.4f}")
+        for r in results:
+            f.write(json.dumps(r) + "\n")
 
     rows = [json.loads(l) for l in out.read_text().splitlines()]
     print(f"\n=== summary ===")
