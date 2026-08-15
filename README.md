@@ -2,389 +2,198 @@
   <img src="docs/logo.svg" alt="Reasonix" width="640"/>
 </p>
 
-<p align="center">
-  <strong>English</strong>
-  &nbsp;·&nbsp;
-  <a href="./README.zh-CN.md">简体中文</a>
-  &nbsp;·&nbsp;
-  <a href="./docs/SPEC.md">Spec</a>
-  &nbsp;·&nbsp;
-  <a href="https://esengine.github.io/DeepSeek-Reasonix/">Website</a>
-  &nbsp;·&nbsp;
-  <strong><a href="https://discord.gg/XF78rEME2D">Discord</a></strong>
-</p>
-
-> [!IMPORTANT]
-> **Reasonix 1.0 is a ground-up rewrite in Go** — this branch (`main-v2`) is the new default and where development happens now.
-> The earlier `0.x` TypeScript releases are **legacy**, living on the [`v1`](https://github.com/esengine/DeepSeek-Reasonix/tree/v1) branch (maintenance only).
-> See the **[migration guide](./docs/MIGRATING.md)**. `npm i -g reasonix` stays the install command — `1.0.0`+ delivers the Go binary, `0.x` is the legacy TS build.
-
-<p align="center">
-  <a href="https://www.npmjs.com/package/reasonix"><img src="https://img.shields.io/npm/v/reasonix.svg?style=flat-square&color=cb3837&labelColor=161b22&logo=npm&logoColor=white" alt="npm version"/></a>
-  <a href="https://github.com/esengine/reasonix/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/esengine/reasonix/ci.yml?style=flat-square&label=ci&labelColor=161b22&logo=githubactions&logoColor=white" alt="CI"/></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/reasonix.svg?style=flat-square&color=8b949e&labelColor=161b22" alt="license"/></a>
-  <a href="https://www.npmjs.com/package/reasonix"><img src="https://img.shields.io/npm/dm/reasonix.svg?style=flat-square&color=3fb950&labelColor=161b22&label=downloads" alt="downloads"/></a>
-  <a href="https://github.com/esengine/reasonix/stargazers"><img src="https://img.shields.io/github/stars/esengine/reasonix.svg?style=flat-square&color=dbab09&labelColor=161b22&logo=github&logoColor=white" alt="GitHub stars"/></a>
-  <a href="https://atomgit.com/esengine/DeepSeek-Reasonix"><img src="https://atomgit.com/esengine/DeepSeek-Reasonix/star/badge.svg" alt="AtomGit stars"/></a>
-  <a href="https://github.com/esengine/reasonix/graphs/contributors"><img src="https://img.shields.io/github/contributors/esengine/reasonix.svg?style=flat-square&color=bc8cff&labelColor=161b22&logo=github&logoColor=white" alt="contributors"/></a>
-  <a href="https://github.com/esengine/reasonix/discussions"><img src="https://img.shields.io/github/discussions/esengine/reasonix.svg?style=flat-square&color=58a6ff&labelColor=161b22&logo=github&logoColor=white" alt="Discussions"/></a>
-  <a href="https://discord.gg/XF78rEME2D"><img src="https://img.shields.io/badge/discord-join-5865F2.svg?style=flat-square&labelColor=161b22&logo=discord&logoColor=white" alt="Discord"/></a>
-</p>
-
-<p align="center">
-  <a href="https://oosmetrics.com/repo/esengine/reasonix"><img src="https://api.oosmetrics.com/api/v1/badge/achievement/9e931d80-2050-4b10-902e-44970cc133ad.svg" alt="oosmetrics — Top 2 in Agents by velocity"/></a>
-  <a href="https://oosmetrics.com/repo/esengine/reasonix"><img src="https://api.oosmetrics.com/api/v1/badge/achievement/556d94b3-61b7-486b-baf2-888b9327deab.svg" alt="oosmetrics — Top 3 in LLMs by velocity"/></a>
-  <a href="https://oosmetrics.com/repo/esengine/reasonix"><img src="https://api.oosmetrics.com/api/v1/badge/achievement/0f457d4c-efca-4d15-ad2b-139691ff342c.svg" alt="oosmetrics — Top 3 in CLI by velocity"/></a>
-</p>
-
-<br/>
-
-<h3 align="center">A DeepSeek-native AI coding agent for your terminal.</h3>
-<p align="center">A config- and plugin-driven harness — a single static Go binary, tuned around DeepSeek's prefix cache so token costs stay low across long sessions.</p>
-
-<br/>
-
-> [!IMPORTANT]
-> **Community · 加入社区** — bilingual Discord for setup help (`#help` / `#求助`), workflow showcases, and feature ideas. → **<https://discord.gg/XF78rEME2D>**
-
-<br/>
-
-## Features
-
-- **Config-driven.** Providers, the agent, enabled tools, and plugins are all
-  declared in `reasonix.toml`. No hardcoded models.
-- **Multi-model & composable.** DeepSeek (flash/pro) and MiMo ship as presets;
-  any OpenAI-compatible endpoint is a config entry, not new code. Optionally run
-  two models together (executor + planner) in separate, cache-stable sessions.
-- **Plugin-driven.** External tools run as subprocesses over stdio JSON-RPC
-  (MCP-compatible). Built-in tools self-register at compile time.
-- **Zero-friction distribution.** `CGO_ENABLED=0` single binary; cross-compile
-  to six targets with one command. The only dependency is a TOML parser.
-
-## Install
-
-```sh
-npm i -g reasonix                  # any OS; pulls the prebuilt native binary
-brew install esengine/reasonix/reasonix   # macOS
-```
-
-Prebuilt archives (`darwin|linux|windows × amd64|arm64`) and `SHA256SUMS` are on
-every [GitHub release](https://github.com/esengine/DeepSeek-Reasonix/releases).
-
-### Code signing
-
-Windows builds are code-signed with a free certificate provided by the
-[SignPath Foundation](https://signpath.org/), with signing through
-[SignPath.io](https://signpath.io/).
-
-### Build from source
-
-```sh
-make build      # -> bin/reasonix(.exe)
-make cross      # -> dist/ (darwin|linux|windows × amd64|arm64)
-```
-
-## Quick start
-
-```sh
-reasonix setup                      # config wizard → ./reasonix.toml
-export DEEPSEEK_API_KEY=sk-...  # or put it in .env (see .env.example)
-reasonix chat                       # then run /init to generate AGENTS.md (project memory)
-reasonix run "implement the TODOs in main.go"
-reasonix run --model mimo-pro "add unit tests for this function"
-echo "explain this code" | reasonix run
-```
-
-## Configuration
-
-Resolution order: **flag > `./reasonix.toml` > `~/.config/reasonix/config.toml` >
-built-in defaults**. Secrets come from the environment via `api_key_env` and are
-never stored in config files.
-
-```toml
-default_model = "deepseek-flash"   # executor; set [agent].planner_model to add a planner
-# language    = "zh"               # ui language; empty = auto-detect from $LANG / $REASONIX_LANG
-
-[agent]
-max_steps = 0                    # executor tool-call rounds; 0 = no limit
-planner_max_steps = 12           # planner read-only tool-call rounds; 0 = no limit
-# planner_model = "mimo-pro"          # optional low-frequency planner
-# subagent_model = "deepseek-pro"     # optional default for runAs=subagent skills
-# subagent_models = { review = "deepseek-pro", security_review = "deepseek-pro" }
-auto_plan = "off"                  # off|on; off keeps plan mode manual
-# auto_plan_classifier = "deepseek-flash"   # optional; only borderline tasks call it
-
-[[providers]]
-name        = "deepseek-flash"
-kind        = "openai"
-base_url    = "https://api.deepseek.com"
-model       = "deepseek-v4-flash"
-api_key_env = "DEEPSEEK_API_KEY"
-# also preset: deepseek-pro, mimo-pro (mimo-v2.5-pro), mimo-flash (mimo-v2-flash) @ api.xiaomimimo.com/v1
-
-[tools]
-enabled = []   # omit/empty = all built-ins
-bash_timeout_seconds = 120   # foreground safety cap; set 0 for no tool-local cap
-
-[skills]
-# paths = ["~/my-skills", "../shared/skills"]   # extra custom skill roots
-# excluded_paths = ["~/.agents/skills"]         # hide convention roots without deleting folders
-# disabled_skills = ["review"]                  # hide skills until /skill enable <name>
-
-[permissions]
-mode  = "ask"                                # writer fallback when no rule matches: ask|allow|deny
-deny  = ["Bash(rm -rf*)", "Bash(git push*)"] # hard-blocked in every mode
-allow = ["Bash(go test:*)"]                  # never prompted
-
-[sandbox]
-# workspace_root = ""          # file-writers confined here; empty = current dir
-# allow_write    = ["/tmp"]    # extra dirs write_file/edit_file/multi_edit may touch
-
-[[plugins]]
-name    = "example"
-command = "reasonix-plugin-example"
-```
-
-Permissions gate each tool call: `deny` > `ask` > `allow` > fallback. Bash and
-file mutation tools require approval by default; read-only tools generally do
-not. Approvals are stored and matched as permission rules, not button labels:
-for example `Bash(npm run build)`, `Bash(npm run test:*)`, and `Edit(docs/**)`.
-`reasonix chat` can grant Bash as an exact command or as a conservative command
-prefix (for example `Bash(go test:*)`), while file-editing tools share session
-edit grants and persist path-scoped rules such as `Edit(src/app.go)`.
-`reasonix run` stays autonomous but still honours `deny`. See
-[`docs/SPEC.md`](docs/SPEC.md) for the full schema and contract.
-
-Permissions are *policy* (which calls to allow / prompt). The **sandbox** is
-*enforcement*: the file-writers (`write_file` / `edit_file` / `multi_edit`)
-refuse any path outside `[sandbox] workspace_root` (default: the current dir, so
-edits stay in the project), resolving symlinks and `..` so a link can't tunnel
-out. Reads are unrestricted. `bash` is itself jailed on macOS by default
-(`[sandbox] bash`, Seatbelt): commands may write only those same roots (plus
-temp and toolchain caches) and reach the network only when `[sandbox] network`
-is set. Other platforms fall back to running unconfined for now (see
-`docs/SPEC.md` §9 for the escape-prompt and Linux support still to come).
-
-### Plugins (MCP)
-
-Reasonix is an MCP client. A `[[plugins]]` entry's `type` selects the transport:
-`stdio` (default) launches a local subprocess (`command`/`args`/`env`); `http`
-(Streamable HTTP) connects to a remote `url` with optional static `headers`
-(`${VAR}` / `${VAR:-default}` expanded from the environment, so tokens stay out
-of the file). Tools surface to the model as `mcp__<server>__<tool>`; a tool
-declaring MCP's `readOnlyHint: true` joins parallel dispatch and the permission
-reader-default.
-
-A server's **prompts** surface as `/mcp__<server>__<prompt>` slash commands
-(positional args after the command); its **resources** are pulled in by writing
-`@<server>:<uri>` in a message; `/mcp` lists connected servers and what each
-exposes. `make build` also produces `bin/reasonix-plugin-example` — a runnable
-reference stdio server (`echo`, `wordcount`, a `review` prompt, a style-guide
-resource) you can copy.
-
-```toml
-[[plugins]]                       # local stdio server
-name    = "example"
-command = "reasonix-plugin-example"
-
-[[plugins]]                       # remote server over Streamable HTTP
-name    = "stripe"
-type    = "http"
-url     = "https://mcp.stripe.com"
-headers = { Authorization = "Bearer ${STRIPE_KEY}" }
-```
-
-Enabled MCP servers start connecting automatically in the background after a
-session begins, so chat stays usable while tools come online. Use `/mcp` or the
-desktop MCP panel to refresh status, reconnect a server, inspect failures, or
-disable a server for the current session.
-
-**Already have an `.mcp.json`?** Drop it in the project root and Reasonix
-reads it as-is — the `mcpServers` spec (`command`/`args`/`env`, `type`/`url`/
-`headers`, `${VAR}` expansion) maps field-for-field onto `[[plugins]]`. Both
-sources are merged; on a name collision `reasonix.toml` wins.
-
-```json
-{
-  "mcpServers": {
-    "filesystem": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path"] },
-    "stripe": { "type": "http", "url": "https://mcp.stripe.com", "headers": { "Authorization": "Bearer ${STRIPE_KEY}" } }
-  }
-}
-```
-
-**Upgrading from `0.x`?** Your old `~/.reasonix/config.json` is still read for its
-`mcpServers` (honouring `mcpDisabled`) as a lowest-priority source, so MCP servers
-keep working — move them into `reasonix.toml`'s `[[plugins]]` or a `.mcp.json` when
-convenient.
-
-### Slash commands
-
-In `reasonix chat`, built-in commands (`/compact`, `/new`/`/clear`, `/rewind`, `/tree`,
-`/branch`, `/switch`, `/todo`, `/model`, `/effort`, `/mcp`, `/memory`, `/help`) run locally.
-`/new` starts a fresh model context while saving the previous transcript for
-history/resume; `/clear` is the Claude Code-compatible alias.
-`/tree` shows saved conversation branches, `/branch [name]` forks the current
-conversation tip, `/branch <turn> [name]` forks from an earlier checkpointed turn,
-and `/switch <id|name>` loads another branch. **Custom commands** are Markdown files under
-`.reasonix/commands/` (project) or `~/.config/reasonix/commands/` (user) —
-`review.md` becomes `/review`, a subdirectory namespaces it (`git/commit.md` →
-`/git:commit`). The body is a prompt template; invoking the command sends it as a
-turn.
-
-```markdown
----
-description: Review the staged diff
-argument-hint: [focus-area]
----
-Review the staged diff. Focus on $ARGUMENTS, list bugs with file:line.
-```
-
-`$ARGUMENTS` expands to all space-separated args, `$1`…`$N` to positional ones.
-MCP prompts also appear here as `/mcp__<server>__<prompt>`.
-
-### @ references
-
-Embed `@` references in a message and Reasonix resolves them before sending, as
-tagged context blocks: `@path/to/file` (or `@dir`) injects a local file's
-contents (or a directory listing), and `@<server>:<uri>` injects an MCP
-resource. A local path is only treated as a reference when it actually exists,
-so ordinary `@mentions` stay literal. Typing `/` or `@` opens an autocomplete
-menu — slash commands, or hierarchical file navigation (one directory level at a
-time, descend into folders) plus MCP resources.
-
-### Two-model collaboration (optional)
-
-`reasonix setup` keeps first-run minimal: pick provider → keys (every SKU of a
-chosen provider is enabled). Running two models together (executor + planner,
-separate cache-stable sessions) is a one-line edit afterwards — set
-`planner_model` to any other enabled provider:
-
-```toml
-[agent]
-planner_model = "deepseek-pro"   # used as the low-frequency planner
-planner_max_steps = 12           # read-only tool-call rounds before pausing
-```
-
-The planner sees loaded `REASONIX.md` / `AGENTS.md` memory and a small read-only
-research tool set, so it can inspect relevant files before handing a plan to the
-executor. Writer and workflow tools remain executor-only. `max_steps` limits the
-executor; `planner_max_steps` limits only the planner, and either can be set to
-`0` for no round limit.
-
-Keep personal step-limit preferences in the user config. Add them to a project's
-`./reasonix.toml` only when that repository needs a shared override, such as a
-larger planner limit for a very large codebase.
-
-Subagent skills inherit the executor model by default. Set `subagent_model` to
-run them on another configured model, or use `subagent_models` to override only
-specific skills such as `review` or `security_review`.
-
-For interactive frontends, plan mode is manual by default. Set
-`agent.auto_plan = "on"` to make complex-looking tasks enter plan mode
-automatically: Reasonix first drafts a read-only plan, then waits for approval
-before editing or running side-effecting commands. `auto_plan_classifier` can
-name a cheap provider such as `deepseek-flash`; it is only called for borderline
-inputs and falls back to the heuristic if classification fails. Use
-`/auto-plan off|on` in `reasonix chat` to change the user-level setting, or
-`reasonix config auto-plan off|on` from a shell/script. Pass `--local` to the
-shell command only when you intentionally want a project-local override.
-
-## Architecture
-
-Three tiers of extensibility, all behind registries the core resolves by name:
-
-1. **Registry** — `Provider` and `Tool` are interfaces; the core has no
-   `switch model`.
-2. **Compile-time built-ins** — providers (`provider/openai`) and tools
-   (`tool/builtin`) self-register via `init()`; `main` blank-imports them.
-   Adding a built-in is one file plus one import.
-3. **Runtime plugins** — executables declared in config, spoken to over
-   newline-delimited JSON-RPC 2.0 on stdin/stdout (the MCP stdio convention).
-   Each remote tool is adapted to the `Tool` interface.
-
-## Status
-
-Done: registry-based providers/tools, OpenAI-compatible streaming with tool
-calls (bounded retry on 429/5xx), built-in tools (read_file, write_file,
-edit_file, multi_edit, bash, ls, glob, grep, web_fetch, task, todo_write, ask),
-TOML config, an interactive `reasonix setup` wizard, two-model collaboration
-(executor + planner in separate, cache-stable sessions), low-frequency context
-compaction, sub-agents (`task`), a bubbletea chat TUI (markdown, plan mode with
-controller-driven approval, live token/activity readout, pinned task list,
-`ask` question chooser, `/compact` `/new` `/tree` `/branch` `/switch` `/todo`), session persistence + resume,
-per-call **permissions** (allow/ask/deny rules; chat prompts before writers, deny
-rules hard-block everywhere), a **workspace sandbox** confining file-writers to
-the project (symlink/`..`-safe), an MCP client — **stdio + Streamable HTTP**
-transports, tools (`mcp__server__tool`, `readOnlyHint`-aware), prompts (slash
-commands), resources (`@`-references), and `/mcp`, configured via `[[plugins]]`
-or a project `.mcp.json` — custom slash commands (`.reasonix/commands/*.md`),
-`@file` / `@resource` references, plus a runnable reference plugin
-(`cmd/reasonix-plugin-example`), the harness loop, and CLI. A Wails desktop
-client (`desktop/`) drives the same kernel. Next: an OS-level sandbox for `bash`
-(macOS Seatbelt / Linux bubblewrap), an Anthropic-native provider, MCP OAuth +
-legacy SSE. See `docs/SPEC.md` §9.
-
-<br/>
-
-## Star History
-
-<a href="https://www.star-history.com/?repos=esengine%2FDeepSeek-Reasonix&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=esengine/DeepSeek-Reasonix&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=esengine/DeepSeek-Reasonix&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=esengine/DeepSeek-Reasonix&type=date&legend=top-left" />
- </picture>
-</a>
-
-<br/>
-
-## Support
-
-If Reasonix has been useful and you'd like to say thanks, you can. It stays a coffee, not a contract — donations don't buy feature priority or change how issues get triaged.
-
-- **International** — PayPal: [paypal.me/yuhuahui](https://paypal.me/yuhuahui)
-- **国内** — 微信支付（扫码）
-
-<p align="center">
-  <img src=".github/sponsor/wechat-pay.jpg" alt="WeChat Pay QR code" width="240"/>
-</p>
-
-<br/>
-
-## Acknowledgments
-
-A small list of folks whose work has shaped Reasonix the most — measured
-by both commit count and code volume. **Listed alphabetically, no ordering
-of importance.** The full contributor graph is on
-[GitHub](https://github.com/esengine/DeepSeek-Reasonix/graphs/contributors).
-
-- [**ctharvey**](https://github.com/ctharvey)
-- [**dimasd-angga**](https://github.com/dimasd-angga) (Dimas D. Angga)
-- [**Evan-Pycraft**](https://github.com/Evan-Pycraft)
-- [**ForeverYoungPp**](https://github.com/ForeverYoungPp)
-- [**GTC2080**](https://github.com/GTC2080) (TaoMu)
-- [**kabaka9527**](https://github.com/kabaka9527)
-- [**lisniuse**](https://github.com/lisniuse) (Richie)
-- [**wade19990814-hue**](https://github.com/wade19990814-hue)
-- [**wviana**](https://github.com/wviana) (Wesley Viana)
-
-Also a separate thank-you to [**Bernardxu123**](https://github.com/Bernardxu123)
-for designing the project logo, and to
-[AIGC Link](https://xhslink.com/m/80ngts127cA) for promoting the project on XiaoHongShu.
-
-<p align="center">
-  <a href="https://github.com/esengine/DeepSeek-Reasonix/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=esengine/DeepSeek-Reasonix&max=100&columns=12" alt="Contributors to esengine/DeepSeek-Reasonix" width="860"/>
-  </a>
-</p>
-
-<br/>
+# Reasonix — secure, lean agent harness
+
+A research fork of the Reasonix agent harness with one goal: make an autonomous
+agent **cheap enough to run long and small enough to audit**. Two parts:
+
+1. **A security control plane** in front of every tool call — capabilities,
+   deterministic credential policy, risk classification, provenance and a
+   redacted audit trail, armed behind a boot self-check.
+2. **Efficiency work** that makes the security story affordable — measured,
+   reproduced and charted in [`benchmarks/efficiency`](benchmarks/efficiency).
+
+Both are real, tested and in this tree, not slides. The benchmark numbers
+below come from one run of one script on this repo.
 
 ---
 
-<p align="center">
-  <sub>MIT — see <a href="./LICENSE">LICENSE</a></sub>
-  <br/>
-  <sub>Built by the community at <a href="https://github.com/esengine/DeepSeek-Reasonix/graphs/contributors">esengine/DeepSeek-Reasonix</a></sub>
-</p>
+## Security control plane
+
+Every model-initiated tool call crosses one gate in [`internal/security`](internal/security):
+
+```
+deterministic policy → capability check → advisory risk → permission gate → audit
+```
+
+The gate is a drop-in on the agent's existing `agent.Gate` seam, so nothing
+bypasses it — shell, file tools, MCP calls, all of it.
+
+### Capability-based authorization
+
+Authorities are scoped strings, and the default is **deny**:
+
+```
+filesystem.read:/workspace/project   process.execute
+network.connect:host:port            mcp.call:server
+```
+
+A session's `GrantSet` starts from the workspace roots: shell execution and
+workspace filesystem access granted, network, MCP and out-of-workspace paths
+denied. Scope matching is prefix-safe: a grant for `/work` never covers
+`/work-other`, and a directory grant covers reads only beneath it.
+
+### Deterministic credential policy
+
+Sensitive path prefixes (`~/.ssh`, `~/.aws`, key material, …) are hard-denied
+at the policy layer — for direct file reads **and** for shell commands that
+reach for them. Checks run on *resolved* paths, so `~`, symlinks and `..`
+cannot smuggle a credential path past the rule. Generic tools like `ssh`,
+`scp`, `aws`, `curl` are not blocked — they classify as **critical risk**
+instead of being silently allowed.
+
+### Risk classification (advisory)
+
+Every gate decision carries a risk level: `low`, `medium`, `high`, `critical`.
+Risk may escalate an ASK into a louder prompt or different wording — it can
+never downgrade a policy deny to an allow.
+
+### Structured audit trail
+
+One JSON line per gate decision, completed with the execution outcome after
+the tool call. The record is **redacted at append time**: secret-looking keys
+(`api_key`, `token`, `password`, …) and `Bearer <token>` values are masked,
+argument representations are size-capped, and the file is opened `O_APPEND`
+outside the agent's write reach (state dir, not workspace). Concurrent-safe,
+flushed per record. `internal/security/audit.go`.
+
+### Provenance, not log text
+
+`Origin` and `Provenance` are first-class records: where an action, or the
+content motivating it, came from — file path, URL, tool name. They travel
+with the gate record, ready for downstream review.
+
+### Boot self-check: the plane refuses to arm broken
+
+Before boot arms the gate, `SelfCheck` drives five interception checks through
+it (sensitive-path read denied, credential-grabbing shell command denied,
+workspace read granted, out-of-workspace read denied, empty grant set denies
+everything). Any failure and the plane stays **off** with a warning —
+fail-safe: a known-off plane beats a silently-broken one.
+
+### OS-level jail under the policy
+
+Policy is the rules; the sandbox is the floor. `bash` calls are confined so
+the model reads freely but **writes only under the workspace** (plus temp and
+toolchain caches) and reaches the network only when allowed:
+
+- **Linux** — bubblewrap namespaces (main path); Landlock ABI is detected and
+  wiring it as a bwrap fallback is the next milestone.
+- **macOS** — Seatbelt via `sandbox-exec` with a generated SBPL profile.
+- Tooling missing or unsupported OS — graceful unconfined fallback with a boot
+  warning; the permission layer still gates every call.
+
+### Attack corpus
+
+`internal/security/attacks_test.go` drives gate-level attack scenarios through
+the **real agent loop** with a simulated malicious model — credential reads,
+sensitive shell commands, scope escapes — and asserts the decision each must
+get. `go test ./internal/security/...` runs the plane against its enemies.
+
+---
+
+## Efficiency: making security affordable
+
+An agent you cannot afford to run is an agent you cannot evaluate or secure.
+This fork cuts cost at every chokepoint:
+
+| Change | Where | Effect |
+| --- | --- | --- |
+| Economy stanzas in the default prompt | `internal/config/config.go` | terse output + minimal implementation, cache-stable |
+| Cache-aligned context | stable static blocks, byte-exact prefixes | ~42K cache-hit tokens per task, ~0.7K missed |
+| Tool output caps | bash 64 KiB, job ring 128 KiB | bounded context, bounded injection surface |
+| Idle connection reuse | `internal/netclient` | fewer dials, less log noise |
+| Thinking-off effort level | flash defaults | fewer reasoning tokens, same pass rate |
+| Per-session metrics | `-metrics` JSON | tokens, cache, cost, steps — provenance starts here |
+
+### Measured, not claimed
+
+`benchmarks/efficiency/runner.py` replays identical prompts against three
+harnesses — this fork, the unmodified upstream base, and Hermes — on real
+AgentDojo data (MIT, banking + travel suites), fresh workspace per run,
+deterministic verifiers, one machine, DeepSeek v4 flash:
+
+| Harness | Tasks | Time / task | Cost / task | Output tokens |
+| --- | --- | --- | --- | --- |
+| **This fork (highly optimized)** | **8/8** | **5.4 s** | **0.21¢** | **271** |
+| Upstream base (bloated baseline) | 8/8 | 20.2 s | 0.73¢ | 1,935 |
+| Hermes agent (third party) | 8/8 | 18.8 s | 0.06¢* | 679 |
+
+\* Hermes' own usage estimate, cache-priced; its real prompt volume hides in
+~89K cache reads per task. Different pricing path, so the honest comparison is
+against the upstream base: **3.5× cheaper, 3.8× faster, 7× less output**.
+
+Artifacts in [`benchmarks/efficiency/results`](benchmarks/efficiency/results):
+
+- `efficiency-chart-efficiency-dataset3.svg` — Swiss-style bar panels
+- `efficiency-lines-efficiency-dataset3.svg` — per-task multi-series lines
+- `friendly-chart-efficiency-dataset3.svg` — plain-language, non-technical view
+- `one-page-summary.pdf` — one-page problem/solution/impact writeup
+- `efficiency-dataset3.jsonl` — raw per-run rows everything above derives from
+
+---
+
+## Quickstart
+
+```sh
+git clone https://github.com/tanm-sys/reasonix.git
+cd reasonix
+make build                              # bin/reasonix
+bin/reasonix run -dir ./work -metrics run.json "your task"
+```
+
+Headless mode resolves ASK to allow when no interactive approver is attached —
+policy and capability denials still apply. Disable the plane entirely for
+baseline experiments: `REASONIX_SECURITY_POLICY=off`.
+
+Configuration lives in `reasonix.example.toml` → copy to
+`~/.config/reasonix/config.toml`. Security block:
+
+```toml
+[security]
+enabled = true                          # false = plane off
+# audit_file = "/path/to/audit.jsonl"   # default: <cache>/security/audit.jsonl
+# deny_read_sensitive = true            # hard-deny credential/system paths
+# deny_bash_sensitive = true            # hard-deny credential-grabbing shell
+```
+
+## Testing
+
+```sh
+go test ./internal/security/...         # gate, policy, audit, attack corpus
+go test ./internal/sandbox/...          # jail spec and shell wrapping
+go test ./internal/tool/builtin/...     # bash output cap, file-writer bounds
+go test ./internal/jobs/...             # output ring cap
+```
+
+## Known limits
+
+- Headless sessions resolve ASK to allow (no interactive approver); the
+  deterministic policy, capability and sandbox layers still hold.
+- Linux confinement needs bubblewrap; Landlock is detected but not yet
+  enforced. macOS uses Seatbelt. Other OSes run unconfined with a boot
+  warning — permission gate still active.
+- The plane is in-process; no separate broker daemon yet.
+- `research/secure-runtime` branch; upstream base is the unmodified reference
+  used as the benchmark baseline.
+
+## Repo map
+
+| Path | What |
+| --- | --- |
+| `internal/security/` | control plane: gate, capabilities, policy, audit, provenance, self-check, attacks |
+| `internal/sandbox/` | OS jail: bwrap (Linux), Seatbelt (macOS), Landlock detection |
+| `internal/config/config.go` | economy stanzas, security block wiring |
+| `internal/tool/builtin/`, `internal/jobs/` | output caps |
+| `benchmarks/efficiency/` | runner, chart generators, results, one-page summary |
+| `docs/` | spec and project docs |
