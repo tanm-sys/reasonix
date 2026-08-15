@@ -119,14 +119,7 @@ func (p Policy) Denies(toolName string, args []byte) (reason string, denied bool
 // positives surface as ASK/deny with an override path, false negatives are
 // covered by the sandbox (later milestone) and the audit trail.
 func commandReferencesSensitive(cmd string) bool {
-	lower := strings.ToLower(cmd)
-	for _, tok := range sensitiveCommandTokens {
-		sensitiveCommandRe := boundaryRe(tok)
-		if sensitiveCommandRe.MatchString(lower) {
-			return true
-		}
-	}
-	return false
+	return sensitiveCommandRe.MatchString(strings.ToLower(cmd))
 }
 
 // sensitiveCommandTokens matched as whole words so "awsome-tool" or
@@ -138,13 +131,15 @@ var sensitiveCommandTokens = []string{
 	"api_key", "token", "secret", "password",
 }
 
-func boundaryRe(tok string) *regexp.Regexp {
-	re, err := regexp.Compile(`(^|[^a-z0-9])` + regexp.QuoteMeta(tok) + `([^a-z0-9]|$)`)
-	if err != nil {
-		return regexp.MustCompile(regexp.QuoteMeta(tok))
+// sensitiveCommandRe is the alternation of all tokens with word boundaries,
+// compiled once instead of per call/per token.
+var sensitiveCommandRe = regexp.MustCompile(func() string {
+	quoted := make([]string, len(sensitiveCommandTokens))
+	for i, tok := range sensitiveCommandTokens {
+		quoted[i] = regexp.QuoteMeta(tok)
 	}
-	return re
-}
+	return `(^|[^a-z0-9])(` + strings.Join(quoted, "|") + `)([^a-z0-9]|$)`
+}())
 
 // riskOf classifies the call for the advisory risk field. Heuristics only:
 // the decision comes from policy/capabilities/permission rules.

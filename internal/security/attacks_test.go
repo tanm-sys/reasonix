@@ -60,7 +60,7 @@ func runAttack(t *testing.T, name string, toolName string, args string, wantDeci
 		t.Fatal(err)
 	}
 	defer audit.Close()
-	inner := &allowAllPermissionGate{} // permission UX out of scope; plane must deny alone
+	inner := trustedGate{} // permission UX out of scope; plane must deny alone
 	workspace := t.TempDir()
 	g := NewGate(DefaultPolicy(), DefaultGrants([]string{workspace}), audit, "attack-session", inner)
 
@@ -126,14 +126,14 @@ func runAttackInWorkspace(t *testing.T, name, toolName, _ string, wantDecision s
 	}
 	defer audit.Close()
 	workspace := t.TempDir()
-	g := NewGate(DefaultPolicy(), DefaultGrants([]string{workspace}), audit, "attack-session", &allowAllPermissionGate{})
+	g := NewGate(DefaultPolicy(), DefaultGrants([]string{workspace}), audit, "attack-session", trustedGate{})
 
 	reg := tool.NewRegistry()
 	reg.Add(recordingReadTool{})
 	reg.Add(recordingCommandTool{})
 	reg.Add(recordingWriteTool{})
 
-	ag := agent.New(&attackProvider{turns: attackTurn("t1", "read_file", mustJSONStr(map[string]string{"path": filepath.Join(workspace, "notes.txt")}))}, reg, agent.NewSession(name), agent.Options{Gate: g}, event.Discard)
+	ag := agent.New(&attackProvider{turns: attackTurn("t1", "read_file", string(mustJSON(t, map[string]string{"path": filepath.Join(workspace, "notes.txt")})))}, reg, agent.NewSession(name), agent.Options{Gate: g}, event.Discard)
 
 	if err := ag.Run(context.Background(), "submit task"); err != nil {
 		t.Fatalf("run failed: %v", err)
@@ -145,11 +145,6 @@ func runAttackInWorkspace(t *testing.T, name, toolName, _ string, wantDecision s
 		t.Fatalf("read audit: %v", err)
 	}
 	checkAuditDecision(t, name, string(raw), "read_file", wantDecision)
-}
-
-func mustJSONStr(m map[string]string) string {
-	b, _ := json.Marshal(m)
-	return string(b)
 }
 
 func checkAuditDecision(t *testing.T, name, raw, toolName, wantDecision string) {
@@ -178,12 +173,6 @@ func checkAuditDecision(t *testing.T, name, raw, toolName, wantDecision string) 
 }
 
 // --- harness tools (no-op executors; the gate blocks before they run) ---
-
-type allowAllPermissionGate struct{}
-
-func (p *allowAllPermissionGate) Check(context.Context, string, json.RawMessage, bool) (bool, string, error) {
-	return true, "", nil
-}
 
 type recordingReadTool struct{}
 

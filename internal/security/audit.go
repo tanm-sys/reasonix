@@ -71,9 +71,6 @@ func OpenAudit(path string) (*AuditLog, error) {
 	return &AuditLog{f: f, path: path, enabled: true}, nil
 }
 
-// NewDiscardAudit returns a no-op audit log (evaluation baseline runs).
-func NewDiscardAudit() *AuditLog { return &AuditLog{enabled: false} }
-
 // Close closes the underlying file.
 func (a *AuditLog) Close() error {
 	a.mu.Lock()

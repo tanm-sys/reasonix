@@ -37,7 +37,7 @@ func TestSelfCheckRejectsUncoveredRead(t *testing.T) {
 	g.Grant(Capability{ID: "filesystem.read", Scope: root + "-elsewhere"})
 	g.Grant(Capability{ID: "filesystem.write", Scope: root + "-elsewhere"})
 	g.Grant(Capability{ID: "process.execute"})
-	gate := NewGate(DefaultPolicy(), g, nil, "", allowAllGate{})
+	gate := NewGate(DefaultPolicy(), g, nil, "", trustedGate{})
 	if ok, _, err := gate.Check(context.Background(), "read_file", mustJSON(t, map[string]string{"path": filepath.Join(root, "f.txt")}), true); err == nil && ok {
 		t.Fatal("read outside grant scope unexpectedly allowed")
 	}

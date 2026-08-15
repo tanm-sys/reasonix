@@ -106,7 +106,7 @@ func TestGateComposition(t *testing.T) {
 	grants := DefaultGrants([]string{ws})
 
 	// inner: permissive gate that behaves like headless (ask -> allow).
-	inner := allowAllGate{}
+	inner := trustedGate{}
 	g := NewGate(DefaultPolicy(), grants, audit, "sess-1", inner)
 
 	ctx := context.Background()
@@ -163,12 +163,4 @@ func TestRedactArgs(t *testing.T) {
 	if len(out) > maxArgsBytes+8 {
 		t.Errorf("redaction not bounded: %d", len(out))
 	}
-}
-
-// allowAllGate is a test double for the existing permission gate (headless
-// behaviour: everything allowed, matching its ask->allow resolution).
-type allowAllGate struct{}
-
-func (allowAllGate) Check(_ context.Context, _ string, _ json.RawMessage, _ bool) (bool, string, error) {
-	return true, "", nil
 }

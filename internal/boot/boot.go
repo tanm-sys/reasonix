@@ -191,7 +191,8 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 	sysPrompt = skill.ApplyIndex(sysPrompt, skills)
 
 	reg := tool.NewRegistry()
-	bashSpec := sandbox.Spec{Mode: cfg.BashMode(), WriteRoots: cfg.WriteRootsForRoot(root), Network: cfg.Sandbox.Network}
+	writeRoots := cfg.WriteRootsForRoot(root)
+	bashSpec := sandbox.Spec{Mode: cfg.BashMode(), WriteRoots: writeRoots, Network: cfg.Sandbox.Network}
 	if abi := sandbox.LandlockABI(); abi > 0 && !sandbox.Available() {
 		fmt.Fprintf(stderr, "info: landlock ABI %d detected; landlock bash confinement lands in a later milestone (bwrap unavailable)\n", abi)
 	}
@@ -207,7 +208,7 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 	}
 	searchSpec := builtin.ResolveSearch(cfg.Tools.Search.Engine, cfg.Tools.Search.RgPath, stderr)
 	bashTimeout := time.Duration(cfg.BashTimeoutSeconds()) * time.Second
-	addBuiltins(reg, cfg.Tools.Enabled, cfg.WriteRootsForRoot(root), bashSpec, bashTimeout, searchSpec, stderr, root, proxySpec)
+	addBuiltins(reg, cfg.Tools.Enabled, writeRoots, bashSpec, bashTimeout, searchSpec, stderr, root, proxySpec)
 	// Always construct a host, even with no plugins configured, so the controller's
 	// host pointer is stable for the session and `/mcp add` can hot-add into it.
 	pluginHost := plugin.NewHost()
@@ -410,7 +411,7 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 		if err != nil {
 			sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelWarn,
 				Text: fmt.Sprintf("security plane audit unavailable, gate disabled: %v", err)})
-		} else if err := security.SelfCheck(cfg.WriteRootsForRoot(root)); err != nil {
+		} else if err := security.SelfCheck(writeRoots); err != nil {
 			sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelWarn,
 				Text: fmt.Sprintf("security plane self-check FAILED, not arming (fail-safe): %v", err)})
 			if cerr := audit.Close(); cerr != nil {
@@ -418,7 +419,7 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 					Text: fmt.Sprintf("audit close: %v", cerr)})
 			}
 		} else {
-			grants := security.DefaultGrants(cfg.WriteRootsForRoot(root))
+			grants := security.DefaultGrants(writeRoots)
 			wrapGate = func(g agent.Gate) agent.Gate {
 				return security.NewGate(security.DefaultPolicy(), grants, audit, "", g)
 			}
