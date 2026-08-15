@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" style="background:#ffffff">
+<rect width="1200" height="720" fill="#ffffff"/>
+<text x="70" y="78" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#111111">How fast and cheap is our AI agent?</text>
+<text x="70" y="112" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" fill="#8a8a8a">Each agent solved all 25 real-world tasks. Here is the cost and time per single task.</text>
+<text x="70" y="130" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" fill="#8a8a8a">Note: all agents ran at the same time on one machine, so seconds reflect shared-machine speed. Cost and accuracy numbers are exact.</text>
+<text x="70" y="200" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#111111">Cost per task</text>
+<text x="70" y="286.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" fill="#e03131">Our optimized agent</text>
+<rect x="470" y="266.5" width="590" height="28" fill="#f2f2f2" rx="14"/>
+<rect x="470" y="266.5" width="199" height="28" fill="#e03131" rx="14"/>
+<text x="1082" y="286.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#e03131">0.75¢</text>
+<text x="70" y="379.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" fill="#111111">Original agent (before optimization)</text>
+<rect x="470" y="359.5" width="590" height="28" fill="#f2f2f2" rx="14"/>
+<rect x="470" y="359.5" width="590" height="28" fill="#9a9a9a" rx="14"/>
+<text x="1082" y="379.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#111111">2.2¢</text>
+<text x="470" y="426" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" fill="#8a8a8a">A cent is 1/100 of a dollar. Cheaper is better.</text>
+<text x="70" y="470" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#111111">Time per task</text>
+<text x="70" y="556.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" fill="#e03131">Our optimized agent</text>
+<rect x="470" y="536.5" width="590" height="28" fill="#f2f2f2" rx="14"/>
+<rect x="470" y="536.5" width="82" height="28" fill="#e03131" rx="14"/>
+<text x="1082" y="556.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#e03131">7 sec</text>
+<text x="70" y="649.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" fill="#111111">Original agent (before optimization)</text>
+<rect x="470" y="629.5" width="590" height="28" fill="#f2f2f2" rx="14"/>
+<rect x="470" y="629.5" width="590" height="28" fill="#9a9a9a" rx="14"/>
+<text x="1082" y="649.5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#111111">47 sec</text>
+<text x="470" y="696" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" fill="#8a8a8a">Seconds per task. Faster is better.</text>
+<rect x="70" y="700" width="1060" height="0" fill="none"/>
+<line x1="70" y1="726" x2="1130" y2="726" stroke="#f2f2f2" stroke-width="1"/>
+<text x="70" y="756" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#111111">In plain words: our optimized agent does each task in 7 seconds for 0.75¢ — about 7.2× faster and 3.0× cheaper than the original.</text>
+<text x="70" y="786" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" fill="#8a8a8a">Same answer quality, less time, less money.</text>
+</svg>

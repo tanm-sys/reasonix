@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 
 rng = random.Random(42)
 BASE = pathlib.Path("/tmp/eff-test/dataset4/tasks")
-AD = "/tmp/opencode/ad-venv/lib/python3.14/site-packages/agentdojo/data/suites"
+AD = "/home/tanmay/.local/lib/python3.14/site-packages/agentdojo/data/suites"
 
 import sys
 sys.path.insert(0, AD)
