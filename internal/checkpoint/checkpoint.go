@@ -11,6 +11,7 @@
 package checkpoint
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -227,11 +228,23 @@ func (s *Store) all() []*Checkpoint {
 	return cps
 }
 
+// PathCheck consults the caller's gate before a rewind writes or deletes a
+// file. Nil check = allow all (the historical behaviour). Returning ok=false
+// skips that path; reason is surfaced to the user.
+type PathCheck func(ctx context.Context, path string, deleting bool) (ok bool, reason string)
+
 // RestoreCode reverts the workspace to its state at the start of turn `fromTurn`:
 // for every file touched in turn fromTurn or later, it writes back that file's
 // earliest recorded content (or deletes it when the earliest snapshot was nil).
 // Returns the paths written and deleted.
 func (s *Store) RestoreCode(fromTurn int) (written, deleted []string, err error) {
+	w, d, _, e := s.RestoreCodeChecked(context.Background(), fromTurn, nil)
+	return w, d, e
+}
+
+// RestoreCodeChecked is RestoreCode with per-path gate consultation (see PathCheck).
+// Refused paths are returned separately so callers can surface them.
+func (s *Store) RestoreCodeChecked(ctx context.Context, fromTurn int, check PathCheck) (written, deleted, refused []string, err error) {
 	s.mu.Lock()
 	// earliest snapshot per path across checkpoints >= fromTurn (turn order → first wins).
 	earliest := map[string]FileSnap{}
@@ -252,12 +265,18 @@ func (s *Store) RestoreCode(fromTurn int) (written, deleted []string, err error)
 	s.mu.Unlock()
 
 	for _, p := range order {
+		snap := earliest[p]
+		if check != nil {
+			if ok, reason := check(ctx, p, snap.Content == nil); !ok {
+				refused = append(refused, fmt.Sprintf("%s (%s)", p, reason))
+				continue
+			}
+		}
 		abs, gerr := safePath(root, p)
 		if gerr != nil {
 			err = gerr
 			continue
 		}
-		snap := earliest[p]
 		if snap.Content == nil {
 			if rmErr := os.Remove(abs); rmErr == nil {
 				deleted = append(deleted, p)
@@ -282,7 +301,7 @@ func (s *Store) RestoreCode(fromTurn int) (written, deleted []string, err error)
 		}
 		written = append(written, p)
 	}
-	return written, deleted, err
+	return written, deleted, refused, err
 }
 
 func detectCurrentEncoding(path string) *fileenc.Kind {

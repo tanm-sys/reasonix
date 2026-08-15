@@ -109,6 +109,9 @@ type Controller struct {
 	// wrapGate applies the security-plane wrapper to every permission gate the
 	// controller installs; nil = pass-through (security disabled).
 	wrapGate func(agent.Gate) agent.Gate
+	// gate is the active gate (security-wrapped) the controller consults for
+	// non-tool side effects like checkpoint restore; nil when none is available.
+	gate agent.Gate
 	cpTurn   int
 	cpBound  map[int]int
 
@@ -217,6 +220,9 @@ type Options struct {
 	// wrapper so a security-enabled run keeps capability checks and audit even
 	// after the ask gate swap. Nil = pass-through.
 	WrapGate func(agent.Gate) agent.Gate
+	// Gate is the active security-wrapped gate used to gate non-tool side
+	// effects (checkpoint restore). Nil disables those checks.
+	Gate agent.Gate
 }
 
 // New builds a Controller. A nil Sink is replaced with event.Discard.
@@ -262,6 +268,7 @@ func New(opts Options) *Controller {
 		pluginCtx:     pluginCtx,
 		cpRoot:        opts.WorkspaceRoot,
 		wrapGate:      opts.WrapGate,
+		gate:          opts.Gate,
 		approvals:     map[string]chan approvalReply{},
 		asks:          map[string]chan []event.AskAnswer{},
 		granted:       map[string]bool{},
@@ -860,11 +867,12 @@ func (c *Controller) EnableInteractiveApproval() {
 				_ = c.onRemember(rule)
 			}
 		} // wire legacy "always allow" persistence callback
+		gated := agent.Gate(gate)
 		if c.wrapGate != nil {
-			c.executor.SetGate(c.wrapGate(gate))
-		} else {
-			c.executor.SetGate(gate)
+			gated = c.wrapGate(gate)
 		}
+		c.executor.SetGate(gated)
+		c.gate = gated
 		c.executor.SetAsker(c)
 	}
 }
@@ -1052,12 +1060,30 @@ func (c *Controller) Rewind(turn int, scope RewindScope) error {
 	}
 
 	if scope == RewindCode || scope == RewindBoth {
-		written, deleted, err := c.cp.RestoreCode(turn)
+		// A restore is a write: route every path through the active gate so
+		// capability checks, policy and the audit trail see it (the security
+		// plane's scope covers rewind like any other file write — see the
+		// checkpoint RestoreCodeChecked contract). One gate call per path.
+		written, deleted, refused, err := c.cp.RestoreCodeChecked(context.Background(), turn,
+			func(ctx context.Context, path string, deleting bool) (bool, string) {
+				if c.gate == nil {
+					return true, ""
+				}
+				args, _ := json.Marshal(map[string]string{"path": path})
+				ok, reason, gerr := c.gate.Check(ctx, "write_file", args, false)
+				if gerr != nil {
+					return false, gerr.Error()
+				}
+				return ok, reason
+			})
 		if err != nil {
 			return c.rewindFail(fmt.Errorf("rewind code: %w", err))
 		}
-		c.sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelInfo,
-			Text: fmt.Sprintf("rewound code to turn %d — %d file(s) restored, %d removed", turn, len(written), len(deleted))})
+		msg := fmt.Sprintf("rewound code to turn %d — %d file(s) restored, %d removed", turn, len(written), len(deleted))
+		if len(refused) > 0 {
+			msg += fmt.Sprintf(", %d refused by gate: %v", len(refused), refused)
+		}
+		c.sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelInfo, Text: msg})
 	}
 	if scope == RewindConversation || scope == RewindBoth {
 		if !hasBound {

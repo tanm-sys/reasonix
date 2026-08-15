@@ -43,6 +43,23 @@ var secretArgKeys = []string{
 // bearerTokenRe masks "Bearer <token>" values wherever they appear.
 var bearerTokenRe = regexp.MustCompile(`(?i)bearer\s+[A-Za-z0-9._~+/=-]{4,}`)
 
+// RecordHook builds a Record for a non-tool execution (shell hooks, slash
+// side effects) so the audit trail covers activity that never reaches Gate.
+// The command is truncated by append-time redaction.
+func RecordHook(event, command string) Record {
+	return Record{
+		TS:        time.Now().UTC(),
+		Actor:     "hook",
+		Tool:      "hook",
+		Operation: event,
+		Args:      command,
+		Policy:    []string{"trusted_hook"},
+		Risk:      "high",
+		Decision:  "ALLOW",
+		AuditID:   newAuditID(),
+	}
+}
+
 // AuditLog appends JSON lines to a file. Safe for concurrent use: writes are
 // serialised and flushed per record. The file is opened with O_APPEND and is
 // expected to live outside the agent's write reach (state dir, not workspace).

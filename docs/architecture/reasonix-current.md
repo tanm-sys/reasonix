@@ -21,7 +21,7 @@ Single Go module (`reasonix`), Go 1.26, zero-CGO build. Entry point `cmd/reasoni
 | `internal/config` | TOML config, MCP JSON, env, sandbox/permission sections, model fallback |
 | `internal/hook` | PreToolUse/PostToolUse shell hooks (only loaded when project trusted) |
 | `internal/jobs` | Background bash jobs across turns |
-| `internal/command` | Slash-command execution (user-invoked shell, deliberately unsandboxed) |
+| `internal/command` | Slash-command loading; prompt templates exposed via the `slash_command` tool (gated like any tool; no unsandboxed user shell here) |
 | `internal/acp` | Agent Client Protocol server (another frontend) |
 | `internal/checkpoint`, `internal/evidence`, `internal/memory`, `internal/instruction` | Turn rewind, verification ledger, auto-memory, project checks |
 | Others | `proc` (kill trees), `netclient`, `fileutil`, `diff`, `event`, `i18n`, `billing`, `lsp`, `codegraph`, `inspect`, `doctor` |
@@ -71,7 +71,10 @@ Two confinement layers:
 - In-process path confinement for file writers via `ConfineWriters(roots)`: write_file/edit_file/multi_edit/notebook_edit/delete_range/delete_symbol reject targets outside symlink-resolved workspace roots (`realPath` walks deepest existing ancestor, so symlinked dirs cannot smuggle writes).
 - `web_fetch` has an SSRF-guarded dialer.
 
-Slash-commands (`internal/command`) run user-invoked shell deliberately unsandboxed (controller.go:698). Background jobs run under the sandbox spec too.
+Custom slash commands are prompt templates exposed through the `slash_command`
+tool — they go through the same gate as any tool call and execute no shell of
+their own (outdated earlier claim: nothing in `internal/command` runs
+unsandboxed user shell). Background jobs run under the sandbox spec too.
 
 ## 6. Important interfaces
 

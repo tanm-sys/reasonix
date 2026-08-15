@@ -334,3 +334,23 @@ func contains(s, sub string) bool {
 	}
 	return false
 }
+
+// TestRunnerAuditHookExecution — every executed hook command must reach the
+// audit sink even when the hook passes (trusted hooks run outside the gate).
+func TestRunnerAuditHookExecution(t *testing.T) {
+	hooks := []ResolvedHook{
+		{HookConfig: HookConfig{Command: "audited-cmd"}, Event: PreToolUse},
+	}
+	spawner := func(_ context.Context, in SpawnInput) SpawnResult {
+		return SpawnResult{ExitCode: 0}
+	}
+	r := NewRunner(hooks, "/tmp", spawner, nil)
+	var got []string
+	r.SetAudit(func(ev, cmd string) { got = append(got, ev+"="+cmd) })
+	if block, _ := r.PreToolUse(context.Background(), "bash", nil); block {
+		t.Fatal("hook unexpectedly blocked")
+	}
+	if len(got) != 1 || got[0] != "PreToolUse=audited-cmd" {
+		t.Fatalf("audit records = %v, want [PreToolUse=audited-cmd]", got)
+	}
+}

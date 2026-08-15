@@ -2,6 +2,7 @@ package checkpoint
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -295,5 +296,42 @@ func TestLazyDirectoryCreation(t *testing.T) {
 	turnPath := filepath.Join(dir, "turn-0.json")
 	if _, err := os.Stat(turnPath); err != nil {
 		t.Fatalf("turn file should now exist: %v", err)
+	}
+}
+
+// TestRestoreCodeCheckedRefusal — the rewind gate must skip denied paths and
+// report them without touching the workspace.
+func TestRestoreCodeCheckedRefusal(t *testing.T) {
+	root := t.TempDir()
+	dir := filepath.Join(t.TempDir(), "refuse-sess.ckpt")
+	s := New(dir, root)
+	a := filepath.Join(root, "a.txt")
+	if err := os.WriteFile(a, []byte("old"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	s.Begin(0, "hi", 0)
+	s.Snapshot(diff.Change{Path: "a.txt", Kind: diff.Modify, OldText: "old"})
+	if err := os.WriteFile(a, []byte("new"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	check := func(_ context.Context, path string, deleting bool) (bool, string) {
+		if path == "a.txt" {
+			return false, "gate denies"
+		}
+		return true, ""
+	}
+	w, d, refused, err := s.RestoreCodeChecked(context.Background(), 0, check)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(w) != 0 || len(d) != 0 || len(refused) != 1 {
+		t.Fatalf("w=%v d=%v refused=%v", w, d, refused)
+	}
+	got, err := os.ReadFile(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != "new" {
+		t.Fatalf("file changed despite refusal: %q", got)
 	}
 }

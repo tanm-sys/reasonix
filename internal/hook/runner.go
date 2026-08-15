@@ -17,12 +17,19 @@ type Runner struct {
 	cwd     string
 	spawner Spawner
 	notify  func(string) // surface a non-blocking (warn/error) hook message; may be nil
+	audit   func(event, command string)
 }
 
 // NewRunner builds a Runner. spawner nil uses DefaultSpawner; notify nil drops
 // non-blocking messages.
 func NewRunner(hooks []ResolvedHook, cwd string, spawner Spawner, notify func(string)) *Runner {
 	return &Runner{hooks: hooks, cwd: cwd, spawner: spawner, notify: notify}
+}
+
+// SetAudit wires an audit sink that records every executed hook command — the
+// security plane cannot gate trusted hooks, but it must see them.
+func (r *Runner) SetAudit(fn func(event, command string)) {
+	r.audit = fn
 }
 
 // Hooks returns the resolved hooks (for `/hooks` listing).
@@ -62,7 +69,19 @@ func (r *Runner) PreToolUse(ctx context.Context, name string, args json.RawMessa
 		return false, ""
 	}
 	rep := Run(ctx, Payload{Event: PreToolUse, Cwd: r.cwd, ToolName: name, ToolArgs: args}, r.hooks, r.spawner)
+	r.auditRun(rep)
 	return r.handle(rep)
+}
+
+// auditRun records each executed hook command (one record per hook, even when
+// several fire for one event) so the audit trail covers trusted-hook execution.
+func (r *Runner) auditRun(rep Report) {
+	if r.audit == nil {
+		return
+	}
+	for _, o := range rep.Outcomes {
+		r.audit(string(rep.Event), o.Hook.Command)
+	}
 }
 
 // PostToolUse fires after a tool call. It can't block; non-pass outcomes are

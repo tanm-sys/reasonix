@@ -402,12 +402,14 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 	// from the workspace write roots; safe defaults deny sensitive paths.
 	gate := agent.Gate(headlessGate)
 	wrapGate := func(g agent.Gate) agent.Gate { return g }
+	var audit *security.AuditLog // nil when security disabled or self-check failed
 	if cfg.Security.Enabled {
 		auditPath := cfg.Security.AuditFile
 		if auditPath == "" {
 			auditPath = filepath.Join(config.CacheDir(), "security", "audit.jsonl")
 		}
-		audit, err := security.OpenAudit(auditPath)
+		var err error
+		audit, err = security.OpenAudit(auditPath)
 		if err != nil {
 			sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelWarn,
 				Text: fmt.Sprintf("security plane audit unavailable, gate disabled: %v", err)})
@@ -440,6 +442,13 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 		root, nil,
 		func(msg string) { sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelWarn, Text: msg}) },
 	)
+	hookRunner.SetAudit(func(ev, cmd string) {
+		// Trusted hooks run outside the gate; the audit trail still records each
+		// execution (hooks are arbitrary shell with the user's privileges).
+		if audit != nil {
+			audit.Append(security.RecordHook(ev, cmd))
+		}
+	})
 	if hook.ProjectDefinesHooks(root) && !hooksTrusted {
 		sink.Emit(event.Event{Kind: event.Notice, Level: event.LevelInfo,
 			Text: "this project defines hooks but they are not trusted — run /hooks trust to enable them"})
@@ -681,6 +690,7 @@ func Build(ctx context.Context, opts Options) (*control.Controller, error) {
 		Sink:          sink,
 		Policy:        policy,
 		WrapGate:      wrapGate,
+		Gate:          gate,
 		Label:         label,
 		SystemPrompt:  sysPrompt,
 		SessionDir:    config.SessionDir(),
