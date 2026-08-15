@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620" style="background:#ffffff">
+<text x="56" y="52" font-family="'Adwaita Sans', sans-serif" font-size="10" letter-spacing="3" fill="#8a8a8a">EFFICIENCY EVALUATION / RESEARCH VIEW</text>
+<rect x="56" y="60" width="48" height="3" fill="#d7261e"/>
+<text x="56" y="92" font-family="'Adwaita Sans', sans-serif" font-size="22" font-weight="700" fill="#17181a">Accuracy–cost frontier</text>
+<text x="56" y="112" font-family="'Adwaita Sans', sans-serif" font-size="11" fill="#8a8a8a">Pass rate vs cost per task (log scale). Up-left = best. efficiency-tricky25.jsonl</text>
+<line x1="60" y1="150.0" x2="840" y2="150.0" stroke="#ececec" stroke-width="1"/>
+<line x1="60" y1="237.5" x2="840" y2="237.5" stroke="#ececec" stroke-width="1"/>
+<line x1="60" y1="325.0" x2="840" y2="325.0" stroke="#ececec" stroke-width="1"/>
+<line x1="60" y1="412.5" x2="840" y2="412.5" stroke="#ececec" stroke-width="1"/>
+<line x1="60" y1="500.0" x2="840" y2="500.0" stroke="#ececec" stroke-width="1"/>
+<line x1="60.0" y1="150" x2="60.0" y2="500" stroke="#ececec" stroke-width="1"/>
+<line x1="147.9" y1="150" x2="147.9" y2="500" stroke="#ececec" stroke-width="1"/>
+<line x1="235.9" y1="150" x2="235.9" y2="500" stroke="#ececec" stroke-width="1"/>
+<line x1="60" y1="500" x2="840" y2="500" stroke="#17181a" stroke-width="1.4"/>
+<line x1="60" y1="150" x2="60" y2="500" stroke="#17181a" stroke-width="1.4"/>
+<circle cx="338.2" cy="192.0" r="10" fill="#d7261e" opacity="0.85"/>
+<text x="338.2" y="174" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="11" font-weight="700" fill="#d7261e">FORK</text>
+<text x="338.2" y="216" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="9" fill="#8a8a8a">22/25 · $0.0075</text>
+<circle cx="476.3" cy="178.0" r="25" fill="#333333" opacity="0.85"/>
+<text x="476.3" y="145" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="11" font-weight="700" fill="#333333">UPSTREAM</text>
+<text x="476.3" y="217" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="9" fill="#8a8a8a">23/25 · $0.0223</text>
+<circle cx="788.6" cy="192.0" r="14" fill="#1f6feb" opacity="0.85"/>
+<text x="788.6" y="170" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="11" font-weight="700" fill="#1f6feb">CLAUDE</text>
+<text x="788.6" y="220" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="9" fill="#8a8a8a">22/25 · $0.2615</text>
+<circle cx="111.4" cy="500.0" r="11" fill="#9a9a9a" opacity="0.85"/>
+<text x="111.4" y="481" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="11" font-weight="700" fill="#9a9a9a">OPENCODE</text>
+<text x="111.4" y="525" text-anchor="middle" font-family="'Adwaita Sans', sans-serif" font-size="9" fill="#8a8a8a">0/25 · $0.0013</text>
+<text x="60" y="540" font-family="'Adwaita Sans', sans-serif" font-size="9" fill="#8a8a8a">COST PER TASK USD (LOG)</text>
+<text x="48" y="325" font-family="'Adwaita Sans', sans-serif" font-size="9" fill="#8a8a8a" transform="rotate(-90 48 325)">PASS RATE</text>
+<text x="60" y="575" font-family="'Adwaita Sans', sans-serif" font-size="9" fill="#8a8a8a">Bubble size = output tokens per task. claude-agent cost = its own meter; others = DeepSeek billing.</text>
+</svg>
