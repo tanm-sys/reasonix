@@ -59,6 +59,8 @@ def main():
     # header
     svg.append(f'<text x="70" y="78" font-family="{FONT}" font-size="34" font-weight="700" fill="{BLACK}">How fast and cheap is our AI agent?</text>')
     svg.append(f'<text x="70" y="112" font-family="{FONT}" font-size="17" fill="{GREY}">Each agent solved all {total_tasks} real-world tasks. Here is the cost and time per single task.</text>')
+    if SRC.stem.endswith("dataset4"):
+        svg.append(f'<text x="70" y="130" font-family="{FONT}" font-size="12" fill="{GREY}">Note: all agents ran at the same time on one machine, so seconds reflect shared-machine speed. Cost and accuracy numbers are exact.</text>')
     if all_pass:
         svg.append(f'<text x="70" y="140" font-family="{FONT}" font-size="14" font-weight="700" fill="{GREEN}">&#10003; Everyone got all {total_tasks} tasks right — so we compare speed and cost only.</text>')
 

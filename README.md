@@ -145,6 +145,30 @@ deterministic verifiers, one machine, DeepSeek v4 flash:
 ~89K cache reads per task. Different pricing path, so the honest comparison is
 against the upstream base: **3.5× cheaper, 3.8× faster, 7× less output**.
 
+### Stress run — harder tasks, longer data, all agents at once
+
+`benchmarks/efficiency/build_dataset4.py` expands the same AgentDojo data
+(seeded, deterministic) to ~150 flights, ~80 hotels, ~80 restaurants, ~60
+rentals, ~60 calendar events, ~100 slack messages and ~120 transactions, then
+builds 12 harder tasks: cheapest two-leg route with layover rules, three-file
+city bundles, duplicate detection, secret-key scan, free-slot search, budget
+feasibility, median/IQR statistics, transaction reconciliation with fees,
+multi-currency conversion, three-key sort tiebreaks, and multi-city
+itinerary costing. All three harnesses ran **in parallel** on one machine
+(`--parallel`):
+
+| Harness | Pass | Cost / task | Output tokens |
+| --- | --- | --- | --- |
+| **This fork** | **11/12** | **$0.0154** | **717** |
+| Upstream base | 9/12 | $0.0388 | 8,288 |
+| Hermes agent | 10/12 | $0.0035* | 1,991 |
+
+\* Hermes' cache-priced estimate. Cost, pass rate and token counts are
+exact; wall times were measured under contention, so only the serial dataset3
+run is cited for speed. The fork wins on pass rate on the hardest tasks
+(secret-key scan, transaction reconciliation, budget feasibility) — and still
+costs 2.5× less than the upstream base while emitting 11× less output.
+
 Artifacts in [`benchmarks/efficiency/results`](benchmarks/efficiency/results):
 
 - `efficiency-chart-efficiency-dataset3.svg` — Swiss-style bar panels
