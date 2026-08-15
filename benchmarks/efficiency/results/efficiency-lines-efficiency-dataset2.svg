@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860" style="background:#ffffff">
+<rect width="1200" height="860" fill="#ffffff"/>
+<text x="64" y="72" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" letter-spacing="3" fill="#111111">REASONIX / CROSS-HARNESS EFFICIENCY</text>
+<text x="64" y="96" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="30" font-weight="700" fill="#111111">PER-TASK SERIES — 5 HARNESSES</text>
+<rect x="64" y="112" width="56" height="4" fill="#ff0000"/>
+<text x="64" y="126" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" letter-spacing="2" fill="#c9c9c9">COST PER TASK — USD</text>
+<line x1="64" y1="134" x2="264" y2="134" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="150.0" x2="1106" y2="150.0" stroke="#111111" stroke-width="1.6"/>
+<line x1="94" y1="195.0" x2="1106" y2="195.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="240.0" x2="1106" y2="240.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="285.0" x2="1106" y2="285.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="330.0" x2="1106" y2="330.0" stroke="#c9c9c9" stroke-width="1"/>
+<text x="94.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">01</text>
+<text x="186.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">02</text>
+<text x="278.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">03</text>
+<text x="370.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">04</text>
+<text x="462.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">05</text>
+<text x="554.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">06</text>
+<text x="646.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">07</text>
+<text x="738.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">08</text>
+<text x="830.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">09</text>
+<text x="922.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">10</text>
+<text x="1014.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">11</text>
+<text x="1106.0" y="348" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">12</text>
+<polyline points="94.0,314.8 186.0,315.0 278.0,315.5 370.0,310.4 462.0,313.9 554.0,318.0 646.0,316.2 738.0,304.5 830.0,315.5 922.0,317.9 1014.0,314.9 1106.0,297.2" fill="none" stroke="#ff0000" stroke-width="2"/>
+<circle cx="94.0" cy="314.8" r="3" fill="#ff0000"/>
+<text x="94.0" y="306.8" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0017</text>
+<circle cx="186.0" cy="315.0" r="3" fill="#ff0000"/>
+<text x="186.0" y="307.0" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0017</text>
+<circle cx="278.0" cy="315.5" r="3" fill="#ff0000"/>
+<text x="278.0" y="307.5" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0016</text>
+<circle cx="370.0" cy="310.4" r="3" fill="#ff0000"/>
+<text x="370.0" y="302.4" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0022</text>
+<circle cx="462.0" cy="313.9" r="3" fill="#ff0000"/>
+<text x="462.0" y="305.9" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0018</text>
+<circle cx="554.0" cy="318.0" r="3" fill="#ff0000"/>
+<text x="554.0" y="310.0" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0013</text>
+<circle cx="646.0" cy="316.2" r="3" fill="#ff0000"/>
+<text x="646.0" y="308.2" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0015</text>
+<circle cx="738.0" cy="304.5" r="3" fill="#ff0000"/>
+<text x="738.0" y="296.5" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0028</text>
+<circle cx="830.0" cy="315.5" r="3" fill="#ff0000"/>
+<text x="830.0" y="307.5" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0016</text>
+<circle cx="922.0" cy="317.9" r="3" fill="#ff0000"/>
+<text x="922.0" y="309.9" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0013</text>
+<circle cx="1014.0" cy="314.9" r="3" fill="#ff0000"/>
+<text x="1014.0" y="306.9" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0017</text>
+<circle cx="1106.0" cy="297.2" r="3" fill="#ff0000"/>
+<text x="1106.0" y="289.2" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">$0.0036</text>
+<polyline points="94.0,278.3 186.0,298.0 278.0,287.3 370.0,275.8 462.0,271.1 554.0,284.0 646.0,295.9 738.0,209.1 830.0,273.1 922.0,287.2 1014.0,271.0 1106.0,150.0" fill="none" stroke="#111111" stroke-width="2"/>
+<polyline points="94.0,330.0 186.0,330.0 278.0,330.0 370.0,330.0 462.0,330.0 554.0,330.0 646.0,330.0 738.0,330.0 830.0,330.0 922.0,330.0 1014.0,330.0 1106.0,330.0" fill="none" stroke="#111111" stroke-width="2"/>
+<text x="64" y="366" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" letter-spacing="2" fill="#c9c9c9">WALL TIME — SECONDS</text>
+<line x1="64" y1="374" x2="264" y2="374" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="390.0" x2="1106" y2="390.0" stroke="#111111" stroke-width="1.6"/>
+<line x1="94" y1="435.0" x2="1106" y2="435.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="480.0" x2="1106" y2="480.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="525.0" x2="1106" y2="525.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="570.0" x2="1106" y2="570.0" stroke="#c9c9c9" stroke-width="1"/>
+<text x="94.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">01</text>
+<text x="186.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">02</text>
+<text x="278.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">03</text>
+<text x="370.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">04</text>
+<text x="462.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">05</text>
+<text x="554.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">06</text>
+<text x="646.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">07</text>
+<text x="738.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">08</text>
+<text x="830.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">09</text>
+<text x="922.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">10</text>
+<text x="1014.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">11</text>
+<text x="1106.0" y="588" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">12</text>
+<polyline points="94.0,555.1 186.0,557.3 278.0,557.7 370.0,549.8 462.0,554.7 554.0,559.1 646.0,556.2 738.0,546.1 830.0,555.7 922.0,560.4 1014.0,556.4 1106.0,540.8" fill="none" stroke="#ff0000" stroke-width="2"/>
+<circle cx="94.0" cy="555.1" r="3" fill="#ff0000"/>
+<text x="94.0" y="547.1" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">5s</text>
+<circle cx="186.0" cy="557.3" r="3" fill="#ff0000"/>
+<text x="186.0" y="549.3" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">5s</text>
+<circle cx="278.0" cy="557.7" r="3" fill="#ff0000"/>
+<text x="278.0" y="549.7" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">5s</text>
+<circle cx="370.0" cy="549.8" r="3" fill="#ff0000"/>
+<text x="370.0" y="541.8" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">7s</text>
+<circle cx="462.0" cy="554.7" r="3" fill="#ff0000"/>
+<text x="462.0" y="546.7" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">6s</text>
+<circle cx="554.0" cy="559.1" r="3" fill="#ff0000"/>
+<text x="554.0" y="551.1" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">4s</text>
+<circle cx="646.0" cy="556.2" r="3" fill="#ff0000"/>
+<text x="646.0" y="548.2" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">5s</text>
+<circle cx="738.0" cy="546.1" r="3" fill="#ff0000"/>
+<text x="738.0" y="538.1" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">9s</text>
+<circle cx="830.0" cy="555.7" r="3" fill="#ff0000"/>
+<text x="830.0" y="547.7" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">5s</text>
+<circle cx="922.0" cy="560.4" r="3" fill="#ff0000"/>
+<text x="922.0" y="552.4" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">3s</text>
+<circle cx="1014.0" cy="556.4" r="3" fill="#ff0000"/>
+<text x="1014.0" y="548.4" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">5s</text>
+<circle cx="1106.0" cy="540.8" r="3" fill="#ff0000"/>
+<text x="1106.0" y="532.8" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">11s</text>
+<polyline points="94.0,523.5 186.0,540.1 278.0,529.6 370.0,521.3 462.0,508.2 554.0,530.4 646.0,536.5 738.0,451.2 830.0,513.9 922.0,529.0 1014.0,510.4 1106.0,390.0" fill="none" stroke="#111111" stroke-width="2"/>
+<polyline points="94.0,502.0 186.0,528.2 278.0,511.7 370.0,488.6 462.0,531.8 554.0,542.7 646.0,480.8 738.0,502.8 830.0,527.2 922.0,543.2 1014.0,538.3 1106.0,482.8" fill="none" stroke="#111111" stroke-width="2"/>
+<text x="64" y="606" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" letter-spacing="2" fill="#c9c9c9">OUTPUT TOKENS PER TASK</text>
+<line x1="64" y1="614" x2="264" y2="614" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="630.0" x2="1106" y2="630.0" stroke="#111111" stroke-width="1.6"/>
+<line x1="94" y1="675.0" x2="1106" y2="675.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="720.0" x2="1106" y2="720.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="765.0" x2="1106" y2="765.0" stroke="#c9c9c9" stroke-width="1"/>
+<line x1="94" y1="810.0" x2="1106" y2="810.0" stroke="#c9c9c9" stroke-width="1"/>
+<text x="94.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">01</text>
+<text x="186.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">02</text>
+<text x="278.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">03</text>
+<text x="370.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">04</text>
+<text x="462.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">05</text>
+<text x="554.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">06</text>
+<text x="646.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">07</text>
+<text x="738.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">08</text>
+<text x="830.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">09</text>
+<text x="922.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">10</text>
+<text x="1014.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">11</text>
+<text x="1106.0" y="828" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">12</text>
+<polyline points="94.0,804.7 186.0,805.7 278.0,805.0 370.0,801.8 462.0,803.8 554.0,805.5 646.0,805.4 738.0,793.9 830.0,805.2 922.0,806.3 1014.0,804.8 1106.0,786.7" fill="none" stroke="#ff0000" stroke-width="2"/>
+<circle cx="94.0" cy="804.7" r="3" fill="#ff0000"/>
+<text x="94.0" y="796.7" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">246</text>
+<circle cx="186.0" cy="805.7" r="3" fill="#ff0000"/>
+<text x="186.0" y="797.7" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">199</text>
+<circle cx="278.0" cy="805.0" r="3" fill="#ff0000"/>
+<text x="278.0" y="797.0" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">231</text>
+<circle cx="370.0" cy="801.8" r="3" fill="#ff0000"/>
+<text x="370.0" y="793.8" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">382</text>
+<circle cx="462.0" cy="803.8" r="3" fill="#ff0000"/>
+<text x="462.0" y="795.8" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">289</text>
+<circle cx="554.0" cy="805.5" r="3" fill="#ff0000"/>
+<text x="554.0" y="797.5" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">208</text>
+<circle cx="646.0" cy="805.4" r="3" fill="#ff0000"/>
+<text x="646.0" y="797.4" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">213</text>
+<circle cx="738.0" cy="793.9" r="3" fill="#ff0000"/>
+<text x="738.0" y="785.9" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">749</text>
+<circle cx="830.0" cy="805.2" r="3" fill="#ff0000"/>
+<text x="830.0" y="797.2" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">224</text>
+<circle cx="922.0" cy="806.3" r="3" fill="#ff0000"/>
+<text x="922.0" y="798.3" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">171</text>
+<circle cx="1014.0" cy="804.8" r="3" fill="#ff0000"/>
+<text x="1014.0" y="796.8" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">241</text>
+<circle cx="1106.0" cy="786.7" r="3" fill="#ff0000"/>
+<text x="1106.0" y="778.7" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="8" fill="#ff0000">1080</text>
+<polyline points="94.0,777.2 186.0,788.7 278.0,779.9 370.0,773.8 462.0,765.8 554.0,779.8 646.0,788.2 738.0,718.9 830.0,773.4 922.0,778.9 1014.0,765.0 1106.0,630.0" fill="none" stroke="#111111" stroke-width="2"/>
+<polyline points="94.0,793.3 186.0,803.8 278.0,785.8 370.0,756.8 462.0,802.7 554.0,803.8 646.0,769.8 738.0,761.5 830.0,794.2 922.0,804.2 1014.0,802.2 1106.0,763.6" fill="none" stroke="#111111" stroke-width="2"/>
+<line x1="64" y1="828" x2="88" y2="828" stroke="#ff0000" stroke-width="2"/>
+<text x="94" y="831" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#ff0000">fork-reasonix</text>
+<line x1="174.8" y1="828" x2="198.8" y2="828" stroke="#111111" stroke-width="2"/>
+<text x="204.8" y="831" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">upstream-reasonix</text>
+<line x1="308.0" y1="828" x2="332.0" y2="828" stroke="#111111" stroke-width="2"/>
+<text x="338.0" y="831" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">opencode-baseline</text>
+<line x1="441.2" y1="828" x2="465.2" y2="828" stroke="#111111" stroke-width="2"/>
+<text x="471.2" y="831" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">hermes-agent</text>
+<line x1="546.4" y1="828" x2="570.4" y2="828" stroke="#111111" stroke-width="2"/>
+<text x="576.4" y="831" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" fill="#111111">prime-agent</text>
+</svg>

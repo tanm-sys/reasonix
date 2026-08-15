@@ -63,6 +63,7 @@ type Job struct {
 	mu         sync.Mutex
 	buf        bytes.Buffer
 	readOffset int
+	clipped    bool // overflow already dropped from the ring
 	status     Status
 	result     string
 	resultRead bool // result already surfaced by Output (task jobs stream nothing to buf)
@@ -96,6 +97,14 @@ func NewManager(sink event.Sink) *Manager {
 	return &Manager{sink: sink, root: root, cancel: cancel, jobs: map[string]*Job{}}
 }
 
+// jobOutputCap is the per-job ring cap. A long-running server (dev watcher,
+// tail -f) would otherwise grow its buffer without bound while unconsumed —
+// every byte staying in memory isn't the point, the newest output is. Older
+// bytes are dropped and readOffset tracks the trim so "new since last poll"
+// stays consistent. The terminal result field is not capped (it is a task's
+// answer, not a stream).
+const jobOutputCap = 128 << 10 // 128 KiB
+
 // jobWriter appends a job's streamed output under its lock so a concurrent
 // Output read never races the producing goroutine.
 type jobWriter struct{ j *Job }
@@ -103,6 +112,20 @@ type jobWriter struct{ j *Job }
 func (w jobWriter) Write(p []byte) (int, error) {
 	w.j.mu.Lock()
 	defer w.j.mu.Unlock()
+	if w.j.buf.Len()+len(p) > jobOutputCap {
+		// Ring: drop oldest bytes (bounding the buffer), keeping readOffset
+		// aligned so Output still reports only what is new since the last poll.
+		trim := w.j.buf.Len() + len(p) - jobOutputCap
+		if trim > w.j.buf.Len() {
+			trim = w.j.buf.Len()
+		}
+		w.j.buf.Next(trim)
+		w.j.readOffset -= trim
+		if w.j.readOffset < 0 {
+			w.j.readOffset = 0
+		}
+		w.j.clipped = true
+	}
 	return w.j.buf.Write(p)
 }
 
@@ -198,6 +221,10 @@ func (m *Manager) Output(id string) (text string, status Status, ok bool) {
 	full := j.buf.String()
 	text = full[j.readOffset:]
 	j.readOffset = len(full)
+	if j.clipped && text != "" {
+		text = "(buffer clipped at 128 KiB; oldest bytes dropped)\n" + text
+		j.clipped = false
+	}
 	// A task job streams nothing to the buffer — its answer lands in result. Once
 	// it is terminal with no buffered output, surface that result once so a task's
 	// answer is visible here too (bash_output's description promises task support).

@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" viewBox="0 0 900 500">
+<rect x="0" y="0" width="900" height="500" fill="white"/>
+<text x="450.0" y="22" font-size="18" font-weight="bold" text-anchor="middle">Monthly Revenue vs Costs and Profit</text>
+<line x1="70" y1="440.0" x2="880" y2="440.0" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="444.0" font-size="11" text-anchor="end" fill="#444">0</text>
+<line x1="70" y1="379.3939393939394" x2="880" y2="379.3939393939394" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="383.3939393939394" font-size="11" text-anchor="end" fill="#444">50</text>
+<line x1="70" y1="318.78787878787875" x2="880" y2="318.78787878787875" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="322.78787878787875" font-size="11" text-anchor="end" fill="#444">100</text>
+<line x1="70" y1="258.1818181818182" x2="880" y2="258.1818181818182" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="262.1818181818182" font-size="11" text-anchor="end" fill="#444">150</text>
+<line x1="70" y1="197.57575757575756" x2="880" y2="197.57575757575756" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="201.57575757575756" font-size="11" text-anchor="end" fill="#444">200</text>
+<line x1="70" y1="136.969696969697" x2="880" y2="136.969696969697" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="140.969696969697" font-size="11" text-anchor="end" fill="#444">250</text>
+<line x1="70" y1="76.36363636363637" x2="880" y2="76.36363636363637" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="80.36363636363637" font-size="11" text-anchor="end" fill="#444">300</text>
+<rect x="76.75" y="294.55" width="24.3" height="145.45" fill="#4c78a8"/>
+<rect x="106.45" y="330.91" width="24.3" height="109.09" fill="#f58518"/>
+<text x="103.75" y="456" font-size="11" text-anchor="middle">Jan</text>
+<rect x="144.25" y="276.36" width="24.3" height="163.64" fill="#4c78a8"/>
+<rect x="173.95" y="318.79" width="24.3" height="121.21" fill="#f58518"/>
+<text x="171.25" y="456" font-size="11" text-anchor="middle">Feb</text>
+<rect x="211.75" y="258.18" width="24.3" height="181.82" fill="#4c78a8"/>
+<rect x="241.45" y="312.73" width="24.3" height="127.27" fill="#f58518"/>
+<text x="238.75" y="456" font-size="11" text-anchor="middle">Mar</text>
+<rect x="279.25" y="240.0" width="24.3" height="200.0" fill="#4c78a8"/>
+<rect x="308.95" y="306.67" width="24.3" height="133.33" fill="#f58518"/>
+<text x="306.25" y="456" font-size="11" text-anchor="middle">Apr</text>
+<rect x="346.75" y="221.82" width="24.3" height="218.18" fill="#4c78a8"/>
+<rect x="376.45" y="294.55" width="24.3" height="145.45" fill="#f58518"/>
+<text x="373.75" y="456" font-size="11" text-anchor="middle">May</text>
+<rect x="414.25" y="197.58" width="24.3" height="242.42" fill="#4c78a8"/>
+<rect x="443.95" y="288.48" width="24.3" height="151.52" fill="#f58518"/>
+<text x="441.25" y="456" font-size="11" text-anchor="middle">Jun</text>
+<rect x="481.75" y="209.7" width="24.3" height="230.3" fill="#4c78a8"/>
+<rect x="511.45" y="300.61" width="24.3" height="139.39" fill="#f58518"/>
+<text x="508.75" y="456" font-size="11" text-anchor="middle">Jul</text>
+<rect x="549.25" y="173.33" width="24.3" height="266.67" fill="#4c78a8"/>
+<rect x="578.95" y="282.42" width="24.3" height="157.58" fill="#f58518"/>
+<text x="576.25" y="456" font-size="11" text-anchor="middle">Aug</text>
+<rect x="616.75" y="149.09" width="24.3" height="290.91" fill="#4c78a8"/>
+<rect x="646.45" y="264.24" width="24.3" height="175.76" fill="#f58518"/>
+<text x="643.75" y="456" font-size="11" text-anchor="middle">Sep</text>
+<rect x="684.25" y="124.85" width="24.3" height="315.15" fill="#4c78a8"/>
+<rect x="713.95" y="258.18" width="24.3" height="181.82" fill="#f58518"/>
+<text x="711.25" y="456" font-size="11" text-anchor="middle">Oct</text>
+<rect x="751.75" y="100.61" width="24.3" height="339.39" fill="#4c78a8"/>
+<rect x="781.45" y="246.06" width="24.3" height="193.94" fill="#f58518"/>
+<text x="778.75" y="456" font-size="11" text-anchor="middle">Nov</text>
+<rect x="819.25" y="76.36" width="24.3" height="363.64" fill="#4c78a8"/>
+<rect x="848.95" y="227.88" width="24.3" height="212.12" fill="#f58518"/>
+<text x="846.25" y="456" font-size="11" text-anchor="middle">Dec</text>
+<polyline points="103.75,403.64 171.25,397.58 238.75,385.45 306.25,373.33 373.75,367.27 441.25,349.09 508.75,349.09 576.25,330.91 643.75,324.85 711.25,306.67 778.75,294.55 846.25,288.48" fill="none" stroke="#72b754" stroke-width="3"/>
+<circle cx="103.75" cy="403.64" r="3.5" fill="#72b754"/>
+<circle cx="171.25" cy="397.58" r="3.5" fill="#72b754"/>
+<circle cx="238.75" cy="385.45" r="3.5" fill="#72b754"/>
+<circle cx="306.25" cy="373.33" r="3.5" fill="#72b754"/>
+<circle cx="373.75" cy="367.27" r="3.5" fill="#72b754"/>
+<circle cx="441.25" cy="349.09" r="3.5" fill="#72b754"/>
+<circle cx="508.75" cy="349.09" r="3.5" fill="#72b754"/>
+<circle cx="576.25" cy="330.91" r="3.5" fill="#72b754"/>
+<circle cx="643.75" cy="324.85" r="3.5" fill="#72b754"/>
+<circle cx="711.25" cy="306.67" r="3.5" fill="#72b754"/>
+<circle cx="778.75" cy="294.55" r="3.5" fill="#72b754"/>
+<circle cx="846.25" cy="288.48" r="3.5" fill="#72b754"/>
+<rect x="80" y="46.0" width="14" height="14" fill="#4c78a8"/>
+<text x="100" y="58.0" font-size="12">Revenue</text>
+<rect x="80" y="66.0" width="14" height="14" fill="#f58518"/>
+<text x="100" y="78.0" font-size="12">Costs</text>
+<rect x="80" y="86.0" width="14" height="14" fill="#72b754"/>
+<text x="100" y="98.0" font-size="12">Profit</text>
+<text x="20" y="468" font-size="12" text-anchor="middle" transform="rotate(-90 20 468)">Amount ($)</text>
+</svg>

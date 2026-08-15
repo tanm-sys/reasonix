@@ -127,10 +127,20 @@ func Summary(spec ProxySpec) string {
 }
 
 func defaultTransport() *http.Transport {
-	if base, ok := http.DefaultTransport.(*http.Transport); ok {
-		return base.Clone()
+	base, ok := http.DefaultTransport.(*http.Transport)
+	if !ok {
+		return &http.Transport{Proxy: http.ProxyFromEnvironment}
 	}
-	return &http.Transport{Proxy: http.ProxyFromEnvironment}
+	tr := base.Clone()
+	// Go's default of 2 idle conns per host churns TLS handshakes (and proxy
+	// round-trips) whenever a session holds more than one connection warm —
+	// streaming reconnects and parallel task jobs both hit this. Tune the idle
+	// pool instead of letting each turn pay a fresh dial.
+	tr.MaxIdleConnsPerHost = 8
+	if tr.MaxIdleConns < 64 {
+		tr.MaxIdleConns = 64
+	}
+	return tr
 }
 
 func proxyFunc(spec ProxySpec) (func(*http.Request) (*url.URL, error), error) {

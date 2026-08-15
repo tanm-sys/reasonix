@@ -765,7 +765,14 @@ keep exactly one in_progress, and flip each to completed as you finish it — up
 the list as you go, not just at the end.
 In plan mode the harness blocks writer tools: do read-only research, then write a
 concise plan as your reply and stop. The user is asked to approve before anything
-is changed; once approved, work through the steps, updating the task list as you go.`
+is changed; once approved, work through the steps, updating the task list as you go.
+Output economy (caveman-ultra): terse fragments, no articles, no filler, no
+hedging, no pleasantries — keep every technical term and code exact. Say what you
+did and why, then stop. Most cost is output tokens: precision beats prose.
+Implementation economy (ponytail-ultra): lazy senior dev — does this need to exist?
+reuse what exists; prefer stdlib; one line over fifty; smallest correct change;
+deletion over addition; never speculative abstraction. Mark real shortcuts with a
+ponytail: comment naming the ceiling.`
 
 // LanguagePolicy is the auto fallback appended to the system prompt when no
 // concrete UI language is resolved. It is static English text, so it stays part

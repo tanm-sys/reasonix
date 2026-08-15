@@ -167,10 +167,10 @@ func (b bash) Execute(ctx context.Context, args json.RawMessage) (string, error)
 	cmd.Env = cmdEnv
 	setKillTree(cmd)
 	cmd.WaitDelay = bashWaitDelay
-	var buf bytes.Buffer
-	w := io.Writer(&buf)
+	buf := newCappedBuffer(bashOutputCap)
+	w := io.Writer(buf)
 	if emit, ok := tool.ProgressFrom(ctx); ok {
-		w = io.MultiWriter(&buf, newProgressWriter(emit))
+		w = io.MultiWriter(buf, newProgressWriter(emit))
 	}
 	cmd.Stdout = w
 	cmd.Stderr = w
@@ -179,6 +179,12 @@ func (b bash) Execute(ctx context.Context, args json.RawMessage) (string, error)
 
 	if errors.Is(context.Cause(runCtx), errBashTimeout) {
 		return out, fmt.Errorf("command timed out (> %s)", timeout)
+	}
+	// A command killed by SIGPIPE after the cap closed the reader stopped
+	// writing for nobody — treat the capped output as the result instead of an
+	// error, so overflow is "truncated output", not "broken command".
+	if err != nil && buf.dropped && cmd.ProcessState != nil && cmd.ProcessState.ExitCode() == -1 {
+		return out, nil
 	}
 	if err != nil {
 		// Non-zero exit: feed output and error back so the model can self-correct.
@@ -192,6 +198,43 @@ func (b bash) foregroundTimeout() time.Duration {
 		return 0
 	}
 	return b.timeout
+}
+
+// bashOutputCap bounds captured foreground output. Unbounded capture would let
+// one runaway command bloat memory and, worse, the context — the whole blob is
+// re-sent on every later turn until compaction. The stream still reaches the
+// frontend live via progressWriter; only the returned text is capped.
+const bashOutputCap = 64 << 10 // 64 KiB
+
+// cappedBuffer keeps the first max bytes written and flags any overflow.
+type cappedBuffer struct {
+	max     int
+	buf     bytes.Buffer
+	dropped bool
+}
+
+func newCappedBuffer(max int) *cappedBuffer { return &cappedBuffer{max: max} }
+
+func (c *cappedBuffer) Write(p []byte) (int, error) {
+	room := c.max - c.buf.Len()
+	if room > 0 {
+		if len(p) > room {
+			c.dropped = true
+			p = p[:room]
+		}
+		c.buf.Write(p)
+	} else if len(p) > 0 {
+		c.dropped = true
+	}
+	return len(p), nil // report full span: writer errors would abort cmd.Run
+}
+
+func (c *cappedBuffer) String() string {
+	s := c.buf.String()
+	if c.dropped {
+		s += fmt.Sprintf("\n... (output truncated at %d bytes)", c.max)
+	}
+	return s
 }
 
 // progressWriter forwards each chunk the command writes to a tool.ProgressFunc,
